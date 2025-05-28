@@ -6,6 +6,8 @@ import com.urlive.domain.url.Url;
 import com.urlive.domain.user.User;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @AttributeOverride(name = "id", column = @Column(name = "user_url_id"))
 public class UserUrl extends BaseEntity {
@@ -35,5 +37,21 @@ public class UserUrl extends BaseEntity {
 
     public Url getUrl() {
         return url;
+    }
+
+    public String getShortUrl() {
+        return url.getShortKey();
+    }
+
+    public String getTitle() {
+        return url.getTitle();
+    }
+
+    public LocalDateTime getCreateTime() {
+        return url.getCreatedAt();
+    }
+
+    public Long getViewCount() {
+        return url.getViewCount();
     }
 }
