@@ -1,9 +1,10 @@
-package com.urlive.controller.dto.board;
+package com.urlive.controller.dto.userUrl;
 
 import java.time.LocalDateTime;
 
-public record BoardDto(
+public record UserUrlResponseDto(
         String name,
+        String originalUrl,
         String shortUrl,
         String title,
         LocalDateTime createdAt,

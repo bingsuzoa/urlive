@@ -1,7 +1,7 @@
 package com.urlive.controller.dto.common;
 
-import com.urlive.controller.dto.board.BoardDto;
 import com.urlive.controller.dto.user.UserResponseDto;
+import com.urlive.controller.dto.userUrl.UserUrlResponseDto;
 import com.urlive.domain.user.Country;
 import com.urlive.domain.user.Gender;
 import com.urlive.domain.user.User;
@@ -23,21 +23,31 @@ public class DtoFactory {
         return new UserResponseDto(id, name, age, gender, country);
     }
 
-    public static List<BoardDto> getBoardDto(User user) {
+    public static List<UserUrlResponseDto> getBoardDto(User user) {
         Set<UserUrl> urls = user.getUrls();
-        List<BoardDto> boardDto = new ArrayList<>();
+        List<UserUrlResponseDto> userUrls = new ArrayList<>();
 
-        for(UserUrl userUrl : urls) {
+        for (UserUrl userUrl : urls) {
             String name = user.getName();
+            String originalUrl = userUrl.getOriginalUrl();
             String shortUrl = userUrl.getShortUrl();
             String title = userUrl.getTitle();
             LocalDateTime createdAt = userUrl.getCreateTime();
             Long viewCount = userUrl.getViewCount();
 
-            boardDto.add(new BoardDto(name, shortUrl, title, createdAt, viewCount));
+            userUrls.add(new UserUrlResponseDto(name, originalUrl, shortUrl, title, createdAt, viewCount));
         }
-        return boardDto;
+        return userUrls;
     }
 
+    public static UserUrlResponseDto getUserUrlDto(UserUrl userUrl) {
+        String name = userUrl.getName();
+        String originalUrl = userUrl.getOriginalUrl();
+        String shortUrl = userUrl.getShortUrl();
+        String title = userUrl.getTitle();
+        LocalDateTime createdAt = userUrl.getCreateTime();
+        Long viewCount = userUrl.getViewCount();
+        return new UserUrlResponseDto(name, originalUrl, shortUrl, title, createdAt, viewCount);
+    }
 
 }

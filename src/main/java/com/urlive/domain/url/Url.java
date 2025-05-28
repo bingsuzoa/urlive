@@ -21,15 +21,14 @@ public class Url extends BaseEntity {
 
     }
 
-    public Url(String originalUrl, String shortKey) {
+    public Url(String originalUrl) {
         this.originalUrl = originalUrl;
-        this.shortKey = shortKey;
     }
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String originalUrl;
 
-    @Column(nullable = false)
+    @Column(unique = true)
     private String shortKey;
 
     @Column(nullable = false, columnDefinition = "varchar(255) default ''")
@@ -52,6 +51,10 @@ public class Url extends BaseEntity {
         return shortKey;
     }
 
+    public void createShortKey(String shortKey) {
+        this.shortKey = shortKey;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -71,4 +74,5 @@ public class Url extends BaseEntity {
     public Long getViewCount() {
         return viewCount;
     }
+
 }
