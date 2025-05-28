@@ -1,4 +1,4 @@
-## 실시간 인기 단축 URL 플랫폼
+## 단축 URL 기반 실시간 인기 순위 플랫폼
 
 ### <span style = 'color : #FFCD28'>요구 사항</span><br/>
 
