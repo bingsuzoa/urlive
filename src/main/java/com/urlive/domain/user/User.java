@@ -31,6 +31,8 @@ public class User extends BaseEntity {
         this.country = country;
     }
 
+    public static final String NOT_EXIST_USER_ID = "존재하지 않는 회원입니다.";
+
     @Column(nullable = false)
     private String name;
 

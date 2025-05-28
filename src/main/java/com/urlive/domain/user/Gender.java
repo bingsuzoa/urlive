@@ -17,7 +17,7 @@ public enum Gender {
         return code;
     }
 
-    public Gender getGender(int code) {
+    public static Gender getGender(int code) {
         return Arrays.stream(Gender.values())
                 .filter(g -> g.getCode() == code)
                 .findFirst()

@@ -32,7 +32,8 @@ public class Url extends BaseEntity {
     @Column(nullable = false)
     private String shortKey;
 
-    private String title;
+    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
+    private String title = "";
 
     @Column(columnDefinition = "int default 0")
     private Long viewCount = 0L;
@@ -65,5 +66,9 @@ public class Url extends BaseEntity {
 
     public Set<UserUrl> getUsers() {
         return users;
+    }
+
+    public Long getViewCount() {
+        return viewCount;
     }
 }

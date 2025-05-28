@@ -20,7 +20,7 @@ public enum Country {
         return code;
     }
 
-    public Country getCountry(int code) {
+    public static Country getCountry(int code) {
         return Arrays.stream(Country.values())
                 .filter(c -> c.getCode() == code)
                 .findFirst()
