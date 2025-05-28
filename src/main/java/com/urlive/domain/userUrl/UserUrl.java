@@ -39,6 +39,14 @@ public class UserUrl extends BaseEntity {
         return url;
     }
 
+    public String getName() {
+        return user.getName();
+    }
+
+    public String getOriginalUrl() {
+        return url.getOriginalUrl();
+    }
+
     public String getShortUrl() {
         return url.getShortKey();
     }
