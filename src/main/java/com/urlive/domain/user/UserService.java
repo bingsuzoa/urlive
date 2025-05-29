@@ -1,11 +1,11 @@
 package com.urlive.domain.user;
 
 
-import com.urlive.controller.dto.userUrl.UserUrlResponseDto;
+import com.urlive.controller.dto.userUrl.UserUrlResponse;
 import com.urlive.controller.dto.common.DtoFactory;
-import com.urlive.controller.dto.url.UrlCreateRequestDto;
-import com.urlive.controller.dto.user.UserCreateRequestDto;
-import com.urlive.controller.dto.user.UserResponseDto;
+import com.urlive.controller.dto.url.UrlCreateRequest;
+import com.urlive.controller.dto.user.UserCreateRequest;
+import com.urlive.controller.dto.user.UserResponse;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlService;
 import com.urlive.domain.userUrl.UserUrl;
@@ -36,13 +36,13 @@ public class UserService {
     private final UserUrlService userUrlService;
 
     @Transactional
-    public UserResponseDto saveUser(UserCreateRequestDto userCreateRequestDto) {
-        User user = userRepository.save(userCreateRequestDto.toEntity());
+    public UserResponse saveUser(UserCreateRequest userCreateRequest) {
+        User user = userRepository.save(userCreateRequest.toEntity());
         return DtoFactory.createUserResponseDto(user);
     }
 
     @Transactional(readOnly = true)
-    public List<UserUrlResponseDto> getUrlsByUserId(Long id) {
+    public List<UserUrlResponse> getUrlsByUserId(Long id) {
         Optional<User> optionalUser = userRepository.findUrlsById(id);
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
@@ -51,13 +51,13 @@ public class UserService {
     }
 
     @Transactional
-    public UserUrlResponseDto createShortUrl(Long id, UrlCreateRequestDto urlCreateRequestDto) {
+    public UserUrlResponse createShortUrl(Long id, UrlCreateRequest urlCreateRequest) {
         Optional<User> optionalUser = userRepository.findUrlsById(id);
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
         }
         User user = optionalUser.get();
-        Url url = urlService.getShortUrl(urlCreateRequestDto);
+        Url url = urlService.getShortUrl(urlCreateRequest);
 
         Optional<UserUrl> optionalUserUrl = userUrlService.getUserUrl(user, url);
         if(optionalUserUrl.isEmpty()) {
