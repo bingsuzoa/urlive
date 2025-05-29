@@ -9,13 +9,11 @@ import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.global.responseFormat.ApiResponse;
-import com.urlive.service.UserService;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import com.urlive.web.dto.user.UserCreateRequest;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
-import io.micrometer.common.lang.Nullable;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +33,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UrliveControllerTest {
+public class IntegrationTest {
 
     @LocalServerPort
     private int port;
