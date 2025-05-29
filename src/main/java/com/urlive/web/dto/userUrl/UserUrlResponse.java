@@ -1,4 +1,4 @@
-package com.urlive.controller.dto.userUrl;
+package com.urlive.web.dto.userUrl;
 
 import java.time.LocalDateTime;
 

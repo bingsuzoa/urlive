@@ -1,15 +1,15 @@
-package com.urlive.domain.user;
+package com.urlive.service;
 
 
-import com.urlive.controller.dto.userUrl.UserUrlResponse;
-import com.urlive.controller.dto.common.DtoFactory;
-import com.urlive.controller.dto.url.UrlCreateRequest;
-import com.urlive.controller.dto.user.UserCreateRequest;
-import com.urlive.controller.dto.user.UserResponse;
+import com.urlive.web.dto.userUrl.UserUrlResponse;
+import com.urlive.web.dto.common.DtoFactory;
+import com.urlive.web.dto.url.UrlCreateRequest;
+import com.urlive.web.dto.user.UserCreateRequest;
+import com.urlive.web.dto.user.UserResponse;
 import com.urlive.domain.url.Url;
-import com.urlive.domain.url.UrlService;
+import com.urlive.domain.user.User;
+import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.userUrl.UserUrl;
-import com.urlive.domain.userUrl.UserUrlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,7 +52,7 @@ public class UserService {
 
     @Transactional
     public UserUrlResponse createShortUrl(Long id, UrlCreateRequest urlCreateRequest) {
-        Optional<User> optionalUser = userRepository.findUrlsById(id);
+        Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
         }

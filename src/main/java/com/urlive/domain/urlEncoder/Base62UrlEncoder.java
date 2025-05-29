@@ -1,4 +1,4 @@
-package com.urlive.domain.encoder;
+package com.urlive.domain.urlEncoder;
 
 
 import org.springframework.context.annotation.Primary;

@@ -1,7 +1,9 @@
-package com.urlive.domain.url;
+package com.urlive.service;
 
-import com.urlive.controller.dto.url.UrlCreateRequest;
-import com.urlive.domain.encoder.UrlEncoder;
+import com.urlive.web.dto.url.UrlCreateRequest;
+import com.urlive.domain.urlEncoder.UrlEncoder;
+import com.urlive.domain.url.Url;
+import com.urlive.domain.url.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +31,7 @@ public class UrlService {
 
     @Transactional
     public Url getShortUrl(UrlCreateRequest urlCreateRequest) {
-        String originalUrl = normalize(urlCreateRequest.rawUrl());
+        String originalUrl = normalize(urlCreateRequest.originalUrl());
         Optional<Url> optionalUrl = urlRepository.findUrlByOriginalUrl(originalUrl);
         if(optionalUrl.isEmpty()) {
             Url url = urlRepository.save(new Url(originalUrl));
