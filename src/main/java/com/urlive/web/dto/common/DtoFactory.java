@@ -1,7 +1,7 @@
-package com.urlive.controller.dto.common;
+package com.urlive.web.dto.common;
 
-import com.urlive.controller.dto.user.UserResponse;
-import com.urlive.controller.dto.userUrl.UserUrlResponse;
+import com.urlive.web.dto.user.UserResponse;
+import com.urlive.web.dto.userUrl.UserUrlResponse;
 import com.urlive.domain.user.Country;
 import com.urlive.domain.user.Gender;
 import com.urlive.domain.user.User;

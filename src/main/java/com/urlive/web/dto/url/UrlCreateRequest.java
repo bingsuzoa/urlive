@@ -1,4 +1,4 @@
-package com.urlive.controller.dto.url;
+package com.urlive.web.dto.url;
 
 
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +10,6 @@ public record UrlCreateRequest(
                 regexp = "^(https?://)[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$",
                 message = "올바른 URL 형식이 아닙니다."
         )
-        String rawUrl
+        String originalUrl
 ) {
 }

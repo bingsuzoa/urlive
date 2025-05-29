@@ -1,6 +1,6 @@
 package com.urlive.domain.url;
 
-import com.urlive.domain.base.BaseEntity;
+import com.urlive.domain.BaseEntity;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.view.View;
 import jakarta.persistence.AttributeOverride;

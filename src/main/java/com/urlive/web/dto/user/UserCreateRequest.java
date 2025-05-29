@@ -1,10 +1,9 @@
-package com.urlive.controller.dto.user;
+package com.urlive.web.dto.user;
 
 import com.urlive.domain.user.Country;
 import com.urlive.domain.user.Gender;
 import com.urlive.domain.user.User;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public record UserCreateRequest(
         @NotBlank(message = "이름 작성은 필수입니다.")
@@ -19,15 +18,14 @@ public record UserCreateRequest(
         @Size(max = 15, message = "15자 내외로 작성해주세요.")
         String password,
 
-        @NotBlank(message = "나이 작성은 필수입니다. ")
-        @Size(min = 4, max = 4, message = "'2025'와 같은 형태로 작성해주세요.")
-        int age,
+        @NotNull(message = "생년월일 체크란이 비어있습니다.")
+        Integer age,
 
-        @NotBlank(message = "성별 체크란이 비어있습니다.")
-        int gender,
+        @NotNull(message = "성별 체크란이 비어있습니다.")
+        Integer gender,
 
-        @NotBlank(message = "국가 체크란이 비어있습니다.")
-        int country
+        @NotNull(message = "국가 체크란이 비어있습니다.")
+        Integer country
 ) {
 
     public User toEntity() {

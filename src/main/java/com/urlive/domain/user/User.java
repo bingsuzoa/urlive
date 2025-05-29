@@ -1,6 +1,6 @@
 package com.urlive.domain.user;
 
-import com.urlive.domain.base.BaseEntity;
+import com.urlive.domain.BaseEntity;
 import com.urlive.domain.userUrl.UserUrl;
 import jakarta.persistence.*;
 

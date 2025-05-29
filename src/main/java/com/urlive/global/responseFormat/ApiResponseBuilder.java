@@ -1,4 +1,4 @@
-package com.urlive.controller.response;
+package com.urlive.global.responseFormat;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

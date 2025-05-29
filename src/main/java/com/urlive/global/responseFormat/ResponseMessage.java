@@ -1,4 +1,4 @@
-package com.urlive.controller.response;
+package com.urlive.global.responseFormat;
 
 public enum ResponseMessage {
     USER_CREATE_SUCCESS("사용자 DB 저장 완료"),

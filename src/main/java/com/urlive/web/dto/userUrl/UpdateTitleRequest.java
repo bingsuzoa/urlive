@@ -1,4 +1,4 @@
-package com.urlive.controller.dto.userUrl;
+package com.urlive.web.dto.userUrl;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -1,4 +1,4 @@
-package com.urlive.controller.response;
+package com.urlive.global.responseFormat;
 
 public class ApiResponse<T> {
 

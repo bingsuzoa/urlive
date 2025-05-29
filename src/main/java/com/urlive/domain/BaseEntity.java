@@ -1,4 +1,4 @@
-package com.urlive.domain.base;
+package com.urlive.domain;
 
 
 import jakarta.persistence.*;

@@ -1,6 +1,6 @@
-package com.urlive.controller.exceptionHandler;
+package com.urlive.global.exceptionHandler;
 
-import com.urlive.controller.response.ApiResponse;
+import com.urlive.global.responseFormat.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Void>> handleMethodArgument(IllegalArgumentException e) {
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgument(MethodArgumentNotValidException e) {
         ApiResponse<Void> response = new ApiResponse<>(400, e.getMessage(), null);
         return ResponseEntity.badRequest().body(response);
     }

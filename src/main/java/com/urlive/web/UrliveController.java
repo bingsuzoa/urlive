@@ -1,15 +1,15 @@
-package com.urlive.controller;
+package com.urlive.web;
 
-import com.urlive.controller.dto.url.UrlCreateRequest;
-import com.urlive.controller.dto.user.UserCreateRequest;
-import com.urlive.controller.dto.user.UserResponse;
-import com.urlive.controller.dto.userUrl.UpdateTitleRequest;
-import com.urlive.controller.dto.userUrl.UserUrlResponse;
-import com.urlive.controller.response.ApiResponse;
-import com.urlive.controller.response.ApiResponseBuilder;
-import com.urlive.controller.response.ResponseMessage;
-import com.urlive.domain.user.UserService;
-import com.urlive.domain.userUrl.UserUrlService;
+import com.urlive.web.dto.url.UrlCreateRequest;
+import com.urlive.web.dto.user.UserCreateRequest;
+import com.urlive.web.dto.user.UserResponse;
+import com.urlive.web.dto.userUrl.UpdateTitleRequest;
+import com.urlive.web.dto.userUrl.UserUrlResponse;
+import com.urlive.global.responseFormat.ApiResponse;
+import com.urlive.global.responseFormat.ApiResponseBuilder;
+import com.urlive.global.responseFormat.ResponseMessage;
+import com.urlive.service.UserService;
+import com.urlive.service.UserUrlService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
