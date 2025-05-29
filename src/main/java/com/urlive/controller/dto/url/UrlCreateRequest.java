@@ -4,7 +4,7 @@ package com.urlive.controller.dto.url;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
-public record UrlCreateRequestDto(
+public record UrlCreateRequest(
         @NotBlank(message = "originalUrl은 필수입니다.")
         @Pattern(
                 regexp = "^(https?://)[\\w\\-]+(\\.[\\w\\-]+)+[/#?]?.*$",

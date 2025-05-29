@@ -1,5 +1,8 @@
 package com.urlive.domain.userUrl;
 
+import com.urlive.controller.dto.common.DtoFactory;
+import com.urlive.controller.dto.userUrl.UpdateTitleRequest;
+import com.urlive.controller.dto.userUrl.UserUrlResponse;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +29,27 @@ public class UserUrlService {
     @Transactional(readOnly = true)
     public Optional<UserUrl> getUserUrl(User user, Url url) {
         return userUrlRepository.findUserUrlByUserAndUrl(user, url);
+    }
+
+    @Transactional
+    public UserUrlResponse updateTitle(Long id, UpdateTitleRequest updateTitleRequest) {
+        Optional<UserUrl> optionalUserUrl = userUrlRepository.findById(id);
+        if(optionalUserUrl.isEmpty()) {
+            throw new IllegalArgumentException(UserUrl.INVALID_USER_URL);
+        }
+        UserUrl userUrl = optionalUserUrl.get();
+        userUrl.updateTitle(updateTitleRequest.newTitle());
+        return DtoFactory.getUserUrlDto(userUrl);
+    }
+
+    @Transactional
+    public UserUrlResponse deleteUserUrl(Long id) {
+        Optional<UserUrl> optionalUserUrl = userUrlRepository.findById(id);
+        if(optionalUserUrl.isEmpty()) {
+            throw new IllegalArgumentException(UserUrl.INVALID_USER_URL);
+        }
+        UserUrl userUrl = optionalUserUrl.get();
+        userUrlRepository.delete(userUrl);
+        return DtoFactory.getUserUrlDto(userUrl);
     }
 }

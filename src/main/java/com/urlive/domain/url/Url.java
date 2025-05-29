@@ -31,9 +31,6 @@ public class Url extends BaseEntity {
     @Column(unique = true)
     private String shortKey;
 
-    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
-    private String title = "";
-
     @Column(columnDefinition = "int default 0")
     private Long viewCount = 0L;
 
@@ -53,14 +50,6 @@ public class Url extends BaseEntity {
 
     public void createShortKey(String shortKey) {
         this.shortKey = shortKey;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void updateTitle(String title) {
-        this.title = title;
     }
 
     public List<View> getViews() {

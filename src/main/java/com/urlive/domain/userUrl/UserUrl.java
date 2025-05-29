@@ -31,6 +31,11 @@ public class UserUrl extends BaseEntity {
     @JoinColumn(nullable = false, name = "url_id")
     private Url url;
 
+    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
+    private String title = "";
+
+    public static final String INVALID_USER_URL = "현재 사용자님이 가지고 있지 않는 url입니다.";
+
     public User getUser() {
         return user;
     }
@@ -52,7 +57,11 @@ public class UserUrl extends BaseEntity {
     }
 
     public String getTitle() {
-        return url.getTitle();
+        return title;
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
     }
 
     public LocalDateTime getCreateTime() {
