@@ -40,7 +40,7 @@ public class UrlServiceTest {
 
         Url result = urlService.getShortUrl(request);
 
-        Assertions.assertThat(result.getShortKey()).isEqualTo("KD");
+        Assertions.assertThat(result.getShortUrl()).isEqualTo("KD");
 
     }
 }

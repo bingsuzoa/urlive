@@ -29,6 +29,15 @@ public class UrlService {
     private final UrlRepository urlRepository;
     private final UrlEncoder urlEncoder;
 
+    @Transactional(readOnly = true)
+    public Url decodeShortUrl(String shortUrl) {
+        Optional<Url> optionalUrl = urlRepository.findUrlByShortUrl(shortUrl);
+        if(optionalUrl.isEmpty()) {
+            throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
+        }
+        return optionalUrl.get();
+    }
+
     @Transactional
     public Url getShortUrl(UrlCreateRequest urlCreateRequest) {
         String originalUrl = normalize(urlCreateRequest.originalUrl());

@@ -53,7 +53,7 @@ public class UserUrl extends BaseEntity {
     }
 
     public String getShortUrl() {
-        return url.getShortKey();
+        return url.getShortUrl();
     }
 
     public String getTitle() {

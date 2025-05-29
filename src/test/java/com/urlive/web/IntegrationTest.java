@@ -9,6 +9,8 @@ import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.global.responseFormat.ApiResponse;
+import com.urlive.service.UserService;
+import com.urlive.web.dto.DecodeUrlResponse;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import com.urlive.web.dto.user.UserCreateRequest;
 import com.urlive.web.dto.user.UserResponse;
@@ -40,6 +42,9 @@ public class IntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UrlRepository urlRepository;
@@ -104,6 +109,31 @@ public class IntegrationTest {
         );
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    @DisplayName("단축 URL decoding 테스트")
+    void 단축_URL로부터_원본_URL_얻기() {
+        User user = setUp();
+        Long userId = user.getId();
+        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
+
+        UserUrlResponse response = userService.createShortUrl(userId, urlCreateRequest);
+
+        String shortUrl = response.shortUrl();
+        String originalUrl = response.originalUrl();
+
+        String url = "http://localhost:" + port + "/url/" + shortUrl;
+
+        ResponseEntity<ApiResponse<DecodeUrlResponse>> responseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<ApiResponse<DecodeUrlResponse>>() {}
+        );
+
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(responseEntity.getBody().getData().originalUrl()).isEqualTo(originalUrl);
     }
 
     @Test
