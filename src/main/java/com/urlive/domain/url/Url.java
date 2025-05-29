@@ -29,7 +29,7 @@ public class Url extends BaseEntity {
     private String originalUrl;
 
     @Column(unique = true)
-    private String shortKey;
+    private String shortUrl;
 
     @Column(columnDefinition = "int default 0")
     private Long viewCount = 0L;
@@ -40,16 +40,18 @@ public class Url extends BaseEntity {
     @OneToMany(mappedBy = "url")
     private Set<UserUrl> users = new HashSet<>();
 
+    public static final String NOT_EXIST_SHORT_URL = "입력하신 단축 URL은 없는 URL입니다.";
+
     public String getOriginalUrl() {
         return originalUrl;
     }
 
-    public String getShortKey() {
-        return shortKey;
+    public String getShortUrl() {
+        return shortUrl;
     }
 
     public void createShortKey(String shortKey) {
-        this.shortKey = shortKey;
+        this.shortUrl = shortKey;
     }
 
     public List<View> getViews() {

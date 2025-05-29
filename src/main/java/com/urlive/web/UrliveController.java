@@ -1,5 +1,6 @@
 package com.urlive.web;
 
+import com.urlive.web.dto.DecodeUrlResponse;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import com.urlive.web.dto.user.UserCreateRequest;
 import com.urlive.web.dto.user.UserResponse;
@@ -42,12 +43,17 @@ public class UrliveController {
 
     @PostMapping("/user-url/{id}")
     public ResponseEntity<ApiResponse<UserUrlResponse>> createShortUrl(@PathVariable Long id, @RequestBody @Valid UrlCreateRequest urlCreateRequest) {
-        return apiResponseBuilder.ok(ResponseMessage.SHORT_KEY_CREATE_SUCCESS, userService.createShortUrl(id, urlCreateRequest));
+        return apiResponseBuilder.ok(ResponseMessage.SHORT_URL_CREATE_SUCCESS, userService.createShortUrl(id, urlCreateRequest));
     }
 
     @GetMapping("/user-url/{id}")
     public ResponseEntity<ApiResponse<List<UserUrlResponse>>> getUrlsByUserId(@PathVariable Long id) {
         return apiResponseBuilder.ok(ResponseMessage.URLS_VIEW_SUCCESS, userService.getUrlsByUserId(id));
+    }
+
+    @GetMapping("/url/{short-url}")
+    public ResponseEntity<ApiResponse<DecodeUrlResponse>> decodeShortUrl(@PathVariable(name = "short-url") String shortUrl) {
+        return apiResponseBuilder.ok(ResponseMessage.SHORT_URL_CREATE_SUCCESS, userService.decodeShortUrl(shortUrl));
     }
 
     @PatchMapping("user-url/{id}")

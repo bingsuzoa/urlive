@@ -1,15 +1,16 @@
 package com.urlive.service;
 
 
-import com.urlive.web.dto.userUrl.UserUrlResponse;
-import com.urlive.web.dto.common.DtoFactory;
-import com.urlive.web.dto.url.UrlCreateRequest;
-import com.urlive.web.dto.user.UserCreateRequest;
-import com.urlive.web.dto.user.UserResponse;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.userUrl.UserUrl;
+import com.urlive.web.dto.DecodeUrlResponse;
+import com.urlive.web.dto.common.DtoFactory;
+import com.urlive.web.dto.url.UrlCreateRequest;
+import com.urlive.web.dto.user.UserCreateRequest;
+import com.urlive.web.dto.user.UserResponse;
+import com.urlive.web.dto.userUrl.UserUrlResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,11 +61,16 @@ public class UserService {
         Url url = urlService.getShortUrl(urlCreateRequest);
 
         Optional<UserUrl> optionalUserUrl = userUrlService.getUserUrl(user, url);
-        if(optionalUserUrl.isEmpty()) {
+        if (optionalUserUrl.isEmpty()) {
             UserUrl userUrl = new UserUrl(user, url);
             userUrlService.saveUserUrl(userUrl);
             return DtoFactory.getUserUrlDto(userUrl);
         }
         return DtoFactory.getUserUrlDto(optionalUserUrl.get());
+    }
+
+    public DecodeUrlResponse decodeShortUrl(String shortUrl) {
+        Url url = urlService.decodeShortUrl(shortUrl);
+        return new DecodeUrlResponse(url.getOriginalUrl());
     }
 }
