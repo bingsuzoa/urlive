@@ -42,7 +42,8 @@ public class UrliveController {
     }
 
     @PostMapping("/user-url/{id}")
-    public ResponseEntity<ApiResponse<UserUrlResponse>> createShortUrl(@PathVariable Long id, @RequestBody @Valid UrlCreateRequest urlCreateRequest) {
+    public ResponseEntity<ApiResponse<UserUrlResponse>> createShortUrl(@PathVariable Long id,
+                                                                       @RequestBody @Valid UrlCreateRequest urlCreateRequest) {
         return apiResponseBuilder.ok(ResponseMessage.SHORT_URL_CREATE_SUCCESS, userService.createShortUrl(id, urlCreateRequest));
     }
 
@@ -57,7 +58,8 @@ public class UrliveController {
     }
 
     @PatchMapping("user-url/{id}")
-    public ResponseEntity<ApiResponse<UserUrlResponse>> updateTitle(@PathVariable Long id, @RequestBody @Valid UpdateTitleRequest updateTitleRequest) {
+    public ResponseEntity<ApiResponse<UserUrlResponse>> updateTitle(@PathVariable Long id,
+                                                                    @RequestBody @Valid UpdateTitleRequest updateTitleRequest) {
         return apiResponseBuilder.ok(ResponseMessage.URL_TITLE_UPDATE_SUCCESS, userUrlService.updateTitle(id, updateTitleRequest));
     }
 
