@@ -52,7 +52,8 @@ public class UserService {
     }
 
     @Transactional
-    public UserUrlResponse createShortUrl(Long id, UrlCreateRequest urlCreateRequest) {
+    public UserUrlResponse createShortUrl(Long id,
+                                          UrlCreateRequest urlCreateRequest) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);

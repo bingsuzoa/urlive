@@ -34,7 +34,8 @@ public class UserUrlService {
     }
 
     @Transactional
-    public UserUrlResponse updateTitle(Long id, UpdateTitleRequest updateTitleRequest) {
+    public UserUrlResponse updateTitle(Long id,
+                                       UpdateTitleRequest updateTitleRequest) {
         Optional<UserUrl> optionalUserUrl = userUrlRepository.findById(id);
         if(optionalUserUrl.isEmpty()) {
             throw new IllegalArgumentException(UserUrl.INVALID_USER_URL);
