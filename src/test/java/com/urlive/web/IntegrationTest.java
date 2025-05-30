@@ -63,6 +63,7 @@ public class IntegrationTest {
     void init() {
         userUrlRepository.deleteAll();
         userRepository.deleteAll();
+        urlRepository.deleteAll();
     }
 
     /// ///////해피 테스트
@@ -140,10 +141,11 @@ public class IntegrationTest {
     @DisplayName("사용자 단축Url 목록 조회 테스트")
     void 목록_조회() {
         User user = setUp();
-        Long id = user.getId();
 
         UrlCreateRequest request = new UrlCreateRequest("https://urlive.com");
-        urlRepository.save(new Url(request.originalUrl()));
+        Url urlEntity = urlRepository.save(new Url(request.originalUrl()));
+        UserUrl userUrl = new UserUrl(user, urlEntity);
+        Long id = userUrlRepository.save(userUrl).getId();
 
         String url = "http://localhost:" + port + "/user-url/" + id;
 
