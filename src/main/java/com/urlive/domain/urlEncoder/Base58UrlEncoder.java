@@ -1,10 +1,12 @@
 package com.urlive.domain.urlEncoder;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+//@Primary
 @Component
 public class Base58UrlEncoder implements UrlEncoder {
     private static final String BASE58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
