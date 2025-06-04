@@ -4,6 +4,7 @@ import com.urlive.domain.user.Country;
 import com.urlive.domain.user.Gender;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
+import com.urlive.web.dto.user.PasswordChangeRequest;
 import com.urlive.web.dto.user.UserCreateRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -46,5 +49,19 @@ public class UserServiceTest {
 
         Assertions.assertThat(userService.saveUser(userCreateRequest)).isNotNull();
         Assertions.assertThat(userService.saveUser(userCreateRequest).country()).isEqualTo(Country.AMERICA);
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경 테스트")
+    void 비밀번호_변경() {
+        User user = new User("test", "01012345678", "test123", 20250604, Gender.WOMEN, Country.AMERICA);
+        when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        String encodedPassword = "encodedPassword";
+        when(passwordService.changePassword(any(), any())).thenReturn(encodedPassword);
+
+        PasswordChangeRequest request = new PasswordChangeRequest("test123");
+
+        Assertions.assertThat(userService.changePassword(1L, request)).isNotNull();
+        Assertions.assertThat(userService.changePassword(1L, request).country()).isEqualTo(Country.AMERICA);
     }
 }
