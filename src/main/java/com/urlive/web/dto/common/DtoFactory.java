@@ -1,5 +1,6 @@
 package com.urlive.web.dto.common;
 
+import com.urlive.domain.url.Url;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
 import com.urlive.domain.user.Country;
@@ -49,5 +50,4 @@ public class DtoFactory {
         Long viewCount = userUrl.getViewCount();
         return new UserUrlResponse(name, originalUrl, shortUrl, title, createdAt, viewCount);
     }
-
 }

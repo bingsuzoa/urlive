@@ -1,9 +1,9 @@
 package com.urlive.service;
 
-import com.urlive.web.dto.url.UrlCreateRequest;
-import com.urlive.domain.urlEncoder.UrlEncoder;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
+import com.urlive.domain.urlEncoder.UrlEncoder;
+import com.urlive.web.dto.url.UrlCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,19 +30,19 @@ public class UrlService {
     private final UrlEncoder urlEncoder;
 
     @Transactional(readOnly = true)
-    public Url decodeShortUrl(String shortUrl) {
+    public String decodeShortUrl(String shortUrl) {
         Optional<Url> optionalUrl = urlRepository.findUrlByShortUrl(shortUrl);
-        if(optionalUrl.isEmpty()) {
+        if (optionalUrl.isEmpty()) {
             throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
         }
-        return optionalUrl.get();
+        return optionalUrl.get().getOriginalUrl();
     }
 
     @Transactional
-    public Url getShortUrl(UrlCreateRequest urlCreateRequest) {
+    public Url findOrCreateShortUrl(UrlCreateRequest urlCreateRequest) {
         String originalUrl = normalize(urlCreateRequest.originalUrl());
         Optional<Url> optionalUrl = urlRepository.findUrlByOriginalUrl(originalUrl);
-        if(optionalUrl.isEmpty()) {
+        if (optionalUrl.isEmpty()) {
             Url url = urlRepository.save(new Url(originalUrl));
             String shortUrl = urlEncoder.encode(url.getId());
             url.createShortKey(shortUrl);
