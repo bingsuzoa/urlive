@@ -108,7 +108,8 @@ public class IntegrationTest {
                 url,
                 HttpMethod.POST,
                 new HttpEntity<>(request),
-                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {}
+                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
+                }
         );
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -132,7 +133,8 @@ public class IntegrationTest {
                 url,
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
-                new ParameterizedTypeReference<ApiResponse<DecodeUrlResponse>>() {}
+                new ParameterizedTypeReference<ApiResponse<DecodeUrlResponse>>() {
+                }
         );
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -155,7 +157,8 @@ public class IntegrationTest {
                 url,
                 HttpMethod.GET,
                 HttpEntity.EMPTY,
-                new ParameterizedTypeReference<ApiResponse<List<UserUrlResponse>>>(){}
+                new ParameterizedTypeReference<ApiResponse<List<UserUrlResponse>>>() {
+                }
         );
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -181,7 +184,8 @@ public class IntegrationTest {
                 url,
                 HttpMethod.PATCH,
                 new HttpEntity<>(request),
-                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {}
+                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
+                }
         );
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -205,7 +209,8 @@ public class IntegrationTest {
                 url,
                 HttpMethod.DELETE,
                 HttpEntity.EMPTY,
-                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {}
+                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
+                }
         );
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -251,7 +256,8 @@ public class IntegrationTest {
                 url,
                 HttpMethod.POST,
                 new HttpEntity<>(request),
-                new ParameterizedTypeReference<ApiResponse<UserResponse>>() {}
+                new ParameterizedTypeReference<ApiResponse<UserResponse>>() {
+                }
         );
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -276,7 +282,8 @@ public class IntegrationTest {
                 url,
                 HttpMethod.PATCH,
                 new HttpEntity<>(request),
-                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {}
+                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
+                }
         );
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

@@ -8,6 +8,7 @@ import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.web.dto.DecodeUrlResponse;
 import com.urlive.web.dto.common.DtoFactory;
 import com.urlive.web.dto.url.UrlCreateRequest;
+import com.urlive.web.dto.user.PasswordChangeRequest;
 import com.urlive.web.dto.user.UserCreateRequest;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
@@ -25,20 +26,36 @@ public class UserService {
     public UserService(
             UserRepository userRepository,
             UrlService urlService,
-            UserUrlService userUrlService
+            UserUrlService userUrlService,
+            PasswordService passwordService
     ) {
         this.userRepository = userRepository;
         this.urlService = urlService;
         this.userUrlService = userUrlService;
+        this.passwordService = passwordService;
     }
 
     private final UserRepository userRepository;
     private final UrlService urlService;
     private final UserUrlService userUrlService;
+    private final PasswordService passwordService;
 
     @Transactional
     public UserResponse saveUser(UserCreateRequest userCreateRequest) {
-        User user = userRepository.save(userCreateRequest.toEntity());
+        String encodedPassword = passwordService.encode(userCreateRequest.password());
+        User user = userRepository.save(userCreateRequest.toEntityWithEncodedPassword(encodedPassword));
+        return DtoFactory.createUserResponseDto(user);
+    }
+
+    @Transactional
+    public UserResponse changePassword(Long id, PasswordChangeRequest passwordChangeRequest) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
+        }
+        String newEncodedPassword = passwordService.changePassword(id, passwordChangeRequest.rawNewPassword());
+        User user = optionalUser.get();
+        user.changePassword(newEncodedPassword);
         return DtoFactory.createUserResponseDto(user);
     }
 
@@ -53,7 +70,7 @@ public class UserService {
 
     @Transactional
     public UserUrlResponse createShortUrl(Long id,
-                                          UrlCreateRequest urlCreateRequest) {
+                                            UrlCreateRequest urlCreateRequest) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);

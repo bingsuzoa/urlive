@@ -1,16 +1,17 @@
 package com.urlive.web;
 
-import com.urlive.web.dto.DecodeUrlResponse;
-import com.urlive.web.dto.url.UrlCreateRequest;
-import com.urlive.web.dto.user.UserCreateRequest;
-import com.urlive.web.dto.user.UserResponse;
-import com.urlive.web.dto.userUrl.UpdateTitleRequest;
-import com.urlive.web.dto.userUrl.UserUrlResponse;
 import com.urlive.global.responseFormat.ApiResponse;
 import com.urlive.global.responseFormat.ApiResponseBuilder;
 import com.urlive.global.responseFormat.ResponseMessage;
 import com.urlive.service.UserService;
 import com.urlive.service.UserUrlService;
+import com.urlive.web.dto.DecodeUrlResponse;
+import com.urlive.web.dto.url.UrlCreateRequest;
+import com.urlive.web.dto.user.PasswordChangeRequest;
+import com.urlive.web.dto.user.UserCreateRequest;
+import com.urlive.web.dto.user.UserResponse;
+import com.urlive.web.dto.userUrl.UpdateTitleRequest;
+import com.urlive.web.dto.userUrl.UserUrlResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,11 @@ public class UrliveController {
         return apiResponseBuilder.created(ResponseMessage.USER_CREATE_SUCCESS, userService.saveUser(userCreateRequest));
     }
 
+    @PostMapping("/user/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> changeUser(@PathVariable Long id, @Valid PasswordChangeRequest passwordChangeRequest) {
+        return apiResponseBuilder.ok(ResponseMessage.USER_PASSWORD_CHANGE_SUCCESS, userService.changePassword(id, passwordChangeRequest));
+    }
+
     @PostMapping("/user-url/{id}")
     public ResponseEntity<ApiResponse<UserUrlResponse>> createShortUrl(@PathVariable Long id,
                                                                        @RequestBody @Valid UrlCreateRequest urlCreateRequest) {
@@ -54,7 +60,7 @@ public class UrliveController {
 
     @GetMapping("/url/{short-url}")
     public ResponseEntity<ApiResponse<DecodeUrlResponse>> decodeShortUrl(@PathVariable(name = "short-url") String shortUrl) {
-        return apiResponseBuilder.ok(ResponseMessage.SHORT_URL_CREATE_SUCCESS, userService.decodeShortUrl(shortUrl));
+        return apiResponseBuilder.ok(ResponseMessage.SHORT_URL_DECODE_SUCCESS, userService.decodeShortUrl(shortUrl));
     }
 
     @PatchMapping("user-url/{id}")

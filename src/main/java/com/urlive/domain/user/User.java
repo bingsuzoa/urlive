@@ -1,8 +1,11 @@
 package com.urlive.domain.user;
 
 import com.urlive.domain.BaseEntity;
+import com.urlive.domain.user.passwordHistory.PasswordHistory;
 import com.urlive.domain.userUrl.UserUrl;
+import com.urlive.service.PasswordService;
 import jakarta.persistence.*;
+import org.springframework.security.core.parameters.P;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +32,8 @@ public class User extends BaseEntity {
         this.age = age;
         this.gender = gender;
         this.country = country;
+        PasswordHistory passwordHistory = new PasswordHistory(this, password);
+        passwordHistories.add(passwordHistory);
     }
 
     public static final String NOT_EXIST_USER_ID = "존재하지 않는 회원입니다.";
@@ -39,8 +44,7 @@ public class User extends BaseEntity {
     @Column(unique = true, nullable = false, length = 11)
     private String phoneNumber;
 
-
-    @Column(nullable = false)
+    @Column(nullable = false, length = 60)
     private String password;
 
     @Column(nullable = false, length = 4)
@@ -57,6 +61,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private Set<UserUrl> urls = new HashSet<>();
 
+    @OneToMany(mappedBy = "user")
+    private Set<PasswordHistory> passwordHistories = new HashSet<>();
+
     public String getName() {
         return name;
     }
@@ -67,6 +74,10 @@ public class User extends BaseEntity {
 
     public String getPassword() {
         return password;
+    }
+
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
     }
 
     public int getAge() {
@@ -83,5 +94,9 @@ public class User extends BaseEntity {
 
     public Set<UserUrl> getUrls() {
         return urls;
+    }
+
+    public Set<PasswordHistory> getPasswordHistories() {
+        return passwordHistories;
     }
 }
