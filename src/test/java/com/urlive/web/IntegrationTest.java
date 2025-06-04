@@ -149,6 +149,31 @@ public class IntegrationTest {
     }
 
     @Test
+    @DisplayName("사용자 단축Url 조회 시 조회수 증가 확인 테스트")
+    void 조회수_증가() {
+        User user = setUp();
+        Long userId = user.getId();
+
+        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
+        UserUrlResponse response = urliveFacade.createShortUrl(userId, urlCreateRequest);
+        String shortUrl = response.shortUrl();
+
+        Url urlEntity = urlRepository.findUrlByShortUrl(shortUrl).get();
+        Long existingViewCount = urlEntity.getViewCount();
+
+        String url = "http://localhost:" + port + "/" + shortUrl;
+
+        ResponseEntity<Void> responseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                Void.class
+        );
+        Url updatedUrlEntity = urlRepository.findUrlByShortUrl(shortUrl).get();
+        Assertions.assertThat(updatedUrlEntity.getViewCount()).isEqualTo(existingViewCount + 1);
+    }
+
+    @Test
     @DisplayName("사용자 단축Url 목록 조회 테스트")
     void 목록_조회() {
         User user = setUp();
