@@ -27,10 +27,21 @@ public class UrlServiceTest {
 
     UrlService urlService = new UrlService(urlRepository, urlEncoder);
 
+    private static final String originalUrl = "http://urlive.com";
+    private static final String shortUrl = "KD";
+
     @Test
-    @DisplayName("인코딩 확인하는 테스트")
-    void 인코딩_확인() {
+    @DisplayName("단축URL 디코딩 테스트")
+    void 단축_url_디코딩_테스트() {
         String originalUrl = "http://urlive.com";
+        Url url = new Url(originalUrl);
+        when(urlRepository.findUrlByShortUrl(any())).thenReturn(Optional.of(url));
+        Assertions.assertThat(urlService.decodeShortUrl(shortUrl)).isEqualTo(originalUrl);
+    }
+
+    @Test
+    @DisplayName("단축 url생성하는 테스트")
+    void 단축_url_생성_테스트() {
         UrlCreateRequest request = new UrlCreateRequest(originalUrl);
         Url url = new Url(originalUrl);
         ReflectionTestUtils.setField(url, "id", 1253L);
@@ -38,9 +49,6 @@ public class UrlServiceTest {
         when(urlRepository.findUrlByOriginalUrl(any())).thenReturn(Optional.empty());
         when(urlRepository.save(any())).thenReturn(url);
 
-        Url result = urlService.getShortUrl(request);
-
-        Assertions.assertThat(result.getShortUrl()).isEqualTo("KD");
-
+        Assertions.assertThat(urlService.findOrCreateShortUrl(request)).isEqualTo(shortUrl);
     }
 }

@@ -64,4 +64,10 @@ public class UserServiceTest {
         Assertions.assertThat(userService.changePassword(1L, request)).isNotNull();
         Assertions.assertThat(userService.changePassword(1L, request).country()).isEqualTo(Country.AMERICA);
     }
+
+    @Test
+    @DisplayName("사용자가 가지고 있는 URL 목록 가져오는 테스트")
+    void url_목록_가져오기() {
+
+    }
 }

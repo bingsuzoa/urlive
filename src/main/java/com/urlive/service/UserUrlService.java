@@ -1,12 +1,12 @@
 package com.urlive.service;
 
-import com.urlive.web.dto.common.DtoFactory;
-import com.urlive.web.dto.userUrl.UpdateTitleRequest;
-import com.urlive.web.dto.userUrl.UserUrlResponse;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.user.User;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
+import com.urlive.web.dto.common.DtoFactory;
+import com.urlive.web.dto.userUrl.UpdateTitleRequest;
+import com.urlive.web.dto.userUrl.UserUrlResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,20 +24,24 @@ public class UserUrlService {
     private final UserUrlRepository userUrlRepository;
 
     @Transactional
-    public UserUrl saveUserUrl(UserUrl userUrl) {
-        return userUrlRepository.save(userUrl);
+    public UserUrl saveUserUrl(User user, Url url) {
+        return userUrlRepository.save(new UserUrl(user, url));
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserUrl> getUserUrl(User user, Url url) {
-        return userUrlRepository.findUserUrlByUserAndUrl(user, url);
+    public UserUrl getUserUrl(User user, Url url) {
+        Optional<UserUrl> optionalUserUrl = userUrlRepository.findUserUrlByUserAndUrl(user, url);
+        if (optionalUserUrl.isEmpty()) {
+            throw new IllegalArgumentException(UserUrl.INVALID_USER_URL);
+        }
+        return optionalUserUrl.get();
     }
 
     @Transactional
     public UserUrlResponse updateTitle(Long id,
                                        UpdateTitleRequest updateTitleRequest) {
         Optional<UserUrl> optionalUserUrl = userUrlRepository.findById(id);
-        if(optionalUserUrl.isEmpty()) {
+        if (optionalUserUrl.isEmpty()) {
             throw new IllegalArgumentException(UserUrl.INVALID_USER_URL);
         }
         UserUrl userUrl = optionalUserUrl.get();
@@ -48,7 +52,7 @@ public class UserUrlService {
     @Transactional
     public UserUrlResponse deleteUserUrl(Long id) {
         Optional<UserUrl> optionalUserUrl = userUrlRepository.findById(id);
-        if(optionalUserUrl.isEmpty()) {
+        if (optionalUserUrl.isEmpty()) {
             throw new IllegalArgumentException(UserUrl.INVALID_USER_URL);
         }
         UserUrl userUrl = optionalUserUrl.get();

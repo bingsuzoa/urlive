@@ -1,11 +1,9 @@
 package com.urlive.service;
 
 
-import com.urlive.domain.url.Url;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.userUrl.UserUrl;
-import com.urlive.web.dto.DecodeUrlResponse;
 import com.urlive.web.dto.common.DtoFactory;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import com.urlive.web.dto.user.PasswordChangeRequest;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -25,19 +24,13 @@ public class UserService {
     @Autowired
     public UserService(
             UserRepository userRepository,
-            UrlService urlService,
-            UserUrlService userUrlService,
             PasswordService passwordService
     ) {
         this.userRepository = userRepository;
-        this.urlService = urlService;
-        this.userUrlService = userUrlService;
         this.passwordService = passwordService;
     }
 
     private final UserRepository userRepository;
-    private final UrlService urlService;
-    private final UserUrlService userUrlService;
     private final PasswordService passwordService;
 
     @Transactional
@@ -49,46 +42,42 @@ public class UserService {
 
     @Transactional
     public UserResponse changePassword(Long id, PasswordChangeRequest passwordChangeRequest) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isEmpty()) {
-            throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
-        }
+        User user = getUserEntityWithoutUrls(id);
         String newEncodedPassword = passwordService.changePassword(id, passwordChangeRequest.rawNewPassword());
-        User user = optionalUser.get();
         user.changePassword(newEncodedPassword);
         return DtoFactory.createUserResponseDto(user);
     }
 
     @Transactional(readOnly = true)
-    public List<UserUrlResponse> getUrlsByUserId(Long id) {
-        Optional<User> optionalUser = userRepository.findUrlsById(id);
-        if (optionalUser.isEmpty()) {
-            throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
-        }
-        return DtoFactory.getBoardDto(optionalUser.get());
+    public List<UserUrlResponse> getUrlsByUser(Long id) {
+        User user = getUserEntityWithUrls(id);
+        return DtoFactory.getBoardDto(user);
     }
 
-    @Transactional
-    public UserUrlResponse createShortUrl(Long id,
-                                            UrlCreateRequest urlCreateRequest) {
+    public boolean isExistingUrlOfUser(Long id, UrlCreateRequest urlCreateRequest) {
+        User user = getUserEntityWithUrls(id);
+        Set<UserUrl> urls = user.getUrls();
+        for (UserUrl url : urls) {
+            if (url.getOriginalUrl().equals(urlCreateRequest.originalUrl())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public User getUserEntityWithoutUrls(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
         }
-        User user = optionalUser.get();
-        Url url = urlService.getShortUrl(urlCreateRequest);
-
-        Optional<UserUrl> optionalUserUrl = userUrlService.getUserUrl(user, url);
-        if (optionalUserUrl.isEmpty()) {
-            UserUrl userUrl = new UserUrl(user, url);
-            userUrlService.saveUserUrl(userUrl);
-            return DtoFactory.getUserUrlDto(userUrl);
-        }
-        return DtoFactory.getUserUrlDto(optionalUserUrl.get());
+        return optionalUser.get();
     }
 
-    public DecodeUrlResponse decodeShortUrl(String shortUrl) {
-        Url url = urlService.decodeShortUrl(shortUrl);
-        return new DecodeUrlResponse(url.getOriginalUrl());
+    public User getUserEntityWithUrls(Long id) {
+        Optional<User> optionalUser = userRepository.findUserWithUrlsById(id);
+        if (optionalUser.isEmpty()) {
+            throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
+        }
+        return optionalUser.get();
     }
 }

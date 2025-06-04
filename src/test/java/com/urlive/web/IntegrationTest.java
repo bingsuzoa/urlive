@@ -9,13 +9,14 @@ import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.global.responseFormat.ApiResponse;
+import com.urlive.service.UrliveFacade;
 import com.urlive.service.UserService;
-import com.urlive.web.dto.DecodeUrlResponse;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import com.urlive.web.dto.user.UserCreateRequest;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
+import io.restassured.response.ValidatableResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +35,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.startsWith;
+
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -57,8 +62,13 @@ public class IntegrationTest {
     @Autowired
     private UserUrlRepository userUrlRepository;
 
+    @Autowired
+    private UrliveFacade urliveFacade;
+
     User setUp() {
-        return userRepository.save(new User("test", "01012345678", "1234", 2025, Gender.MEN, Country.CHINA));
+        User user = userRepository.save(new User("test", "01012345678", "1234", 2025, Gender.MEN, Country.CHINA));
+        userRepository.flush();
+        return user;
     }
 
     @AfterEach
@@ -116,29 +126,26 @@ public class IntegrationTest {
     }
 
     @Test
-    @DisplayName("단축 URL decoding 테스트")
+    @DisplayName("단축 URL 리다이렉트 테스트")
     void 단축_URL로부터_원본_URL_얻기() {
         User user = setUp();
         Long userId = user.getId();
-        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
 
-        UserUrlResponse response = userService.createShortUrl(userId, urlCreateRequest);
+        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
+        UserUrlResponse response = urliveFacade.createShortUrl(userId, urlCreateRequest);
+
 
         String shortUrl = response.shortUrl();
-        String originalUrl = response.originalUrl();
+        String url = "http://localhost:" + port + "/" + shortUrl;
 
-        String url = "http://localhost:" + port + "/url/" + shortUrl;
-
-        ResponseEntity<ApiResponse<DecodeUrlResponse>> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                new ParameterizedTypeReference<ApiResponse<DecodeUrlResponse>>() {
-                }
-        );
-
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(responseEntity.getBody().getData().originalUrl()).isEqualTo(originalUrl);
+        ValidatableResponse validatableResponse = given()
+                .port(port)
+                .redirects().follow(false)
+                .when()
+                .get(url)
+                .then()
+                .statusCode(301)
+                .header("Location", startsWith("https://urlive.com"));
     }
 
     @Test
