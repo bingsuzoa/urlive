@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -29,13 +30,21 @@ public class UrlService {
     private final UrlRepository urlRepository;
     private final UrlEncoder urlEncoder;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public String decodeShortUrl(String shortUrl) {
         Optional<Url> optionalUrl = urlRepository.findUrlByShortUrl(shortUrl);
         if (optionalUrl.isEmpty()) {
             throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
         }
-        return optionalUrl.get().getOriginalUrl();
+        Url url = optionalUrl.get();
+        increaseViewCount(url);
+        return url.getOriginalUrl();
+    }
+
+    private void increaseViewCount(Url url) {
+        if(urlRepository.increaseViewCount(url.getId()) == 0) {
+            throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
+        }
     }
 
     @Transactional

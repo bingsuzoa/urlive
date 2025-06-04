@@ -40,6 +40,16 @@ public class UrlServiceTest {
     }
 
     @Test
+    @DisplayName("조회수 증가 확인 테스트")
+    void 조회수_증가() {
+        String originalUrl = "http://urlive.com";
+        Url url = new Url(originalUrl);
+        when(urlRepository.increaseViewCount(any())).thenReturn(1);
+        when(urlRepository.findUrlByShortUrl(any())).thenReturn(Optional.of(url));
+        Assertions.assertThat(urlService.decodeShortUrl(shortUrl)).isNotNull();
+    }
+
+    @Test
     @DisplayName("단축 url생성하는 테스트")
     void 단축_url_생성_테스트() {
         UrlCreateRequest request = new UrlCreateRequest(originalUrl);
