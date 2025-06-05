@@ -40,8 +40,9 @@ public class UrliveController {
         return apiResponseBuilder.created(ResponseMessage.USER_CREATE_SUCCESS, urliveFacade.saveUser(userCreateRequest));
     }
 
-    @PostMapping("/user/{id}")
-    public ResponseEntity<ApiResponse<UserResponse>> changeUser(@PathVariable Long id, @Valid PasswordChangeRequest passwordChangeRequest) {
+    @PatchMapping("/user/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> changeUserPassword(@PathVariable Long id,
+                                                                        @RequestBody @Valid PasswordChangeRequest passwordChangeRequest) {
         return apiResponseBuilder.ok(ResponseMessage.USER_PASSWORD_CHANGE_SUCCESS, urliveFacade.changePassword(id, passwordChangeRequest));
     }
 
@@ -74,8 +75,8 @@ public class UrliveController {
     }
 
     @DeleteMapping("/user-urls/{userUrlId}")
-    public ResponseEntity<ApiResponse<UserUrlResponse>> deleteUserUrl(@PathVariable Long id) {
-        return apiResponseBuilder.ok(ResponseMessage.USER_URL_DELETE_SUCCESS, urliveFacade.deleteUserUrl(id));
+    public ResponseEntity<ApiResponse<UserUrlResponse>> deleteUserUrl(@PathVariable Long userUrlId) {
+        return apiResponseBuilder.ok(ResponseMessage.USER_URL_DELETE_SUCCESS, urliveFacade.deleteUserUrl(userUrlId));
     }
 
 }
