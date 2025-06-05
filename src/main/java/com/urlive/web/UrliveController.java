@@ -45,15 +45,15 @@ public class UrliveController {
         return apiResponseBuilder.ok(ResponseMessage.USER_PASSWORD_CHANGE_SUCCESS, urliveFacade.changePassword(id, passwordChangeRequest));
     }
 
-    @PostMapping("/user-url/{id}")
-    public ResponseEntity<ApiResponse<UserUrlResponse>> createShortUrl(@PathVariable Long id,
+    @PostMapping("/users/{userId}/urls")
+    public ResponseEntity<ApiResponse<UserUrlResponse>> createShortUrl(@PathVariable Long userId,
                                                                        @RequestBody @Valid UrlCreateRequest urlCreateRequest) {
-        return apiResponseBuilder.ok(ResponseMessage.SHORT_URL_CREATE_SUCCESS, urliveFacade.createShortUrl(id, urlCreateRequest));
+        return apiResponseBuilder.ok(ResponseMessage.SHORT_URL_CREATE_SUCCESS, urliveFacade.createShortUrl(userId, urlCreateRequest));
     }
 
-    @GetMapping("/user-url/{id}")
-    public ResponseEntity<ApiResponse<List<UserUrlResponse>>> getUrlsByUserId(@PathVariable Long id) {
-        return apiResponseBuilder.ok(ResponseMessage.URLS_VIEW_SUCCESS, urliveFacade.getUrlsByUser(id));
+    @GetMapping("/users/{userId}/urls")
+    public ResponseEntity<ApiResponse<List<UserUrlResponse>>> getUrlsByUserId(@PathVariable Long userId) {
+        return apiResponseBuilder.ok(ResponseMessage.URLS_VIEW_SUCCESS, urliveFacade.getUrlsByUser(userId));
     }
 
     @GetMapping("/{short-url}")
@@ -67,13 +67,13 @@ public class UrliveController {
                 .build();
     }
 
-    @PatchMapping("user-url/{id}")
-    public ResponseEntity<ApiResponse<UserUrlResponse>> updateTitle(@PathVariable Long id,
+    @PatchMapping("/user-urls/{userUrlId}")
+    public ResponseEntity<ApiResponse<UserUrlResponse>> updateTitle(@PathVariable Long userUrlId,
                                                                     @RequestBody @Valid UpdateTitleRequest updateTitleRequest) {
-        return apiResponseBuilder.ok(ResponseMessage.URL_TITLE_UPDATE_SUCCESS, urliveFacade.updateTitle(id, updateTitleRequest));
+        return apiResponseBuilder.ok(ResponseMessage.URL_TITLE_UPDATE_SUCCESS, urliveFacade.updateTitle(userUrlId, updateTitleRequest));
     }
 
-    @DeleteMapping("user-url/{id}")
+    @DeleteMapping("/user-urls/{userUrlId}")
     public ResponseEntity<ApiResponse<UserUrlResponse>> deleteUserUrl(@PathVariable Long id) {
         return apiResponseBuilder.ok(ResponseMessage.USER_URL_DELETE_SUCCESS, urliveFacade.deleteUserUrl(id));
     }
