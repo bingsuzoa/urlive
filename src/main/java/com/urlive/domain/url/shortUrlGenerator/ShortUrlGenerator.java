@@ -9,7 +9,7 @@ import java.util.UUID;
 @Component
 public class ShortUrlGenerator {
 
-    private ShortUrlGenerator(UrlEncoder urlEncoder) {
+    public ShortUrlGenerator(UrlEncoder urlEncoder) {
         this.urlEncoder = urlEncoder;
     }
 
