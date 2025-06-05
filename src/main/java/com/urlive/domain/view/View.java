@@ -15,13 +15,12 @@ public class View extends BaseEntity {
 
     }
 
-    public View(Url url, LocalDateTime viewed_at) {
+    public View(Url url) {
         this.url = url;
-        this.viewed_at = viewed_at;
-        url.getViews().add(this);
+        this.viewed_at = LocalDateTime.now();
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "url_id")
     private Url url;
 

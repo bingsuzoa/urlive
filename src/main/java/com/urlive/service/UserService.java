@@ -4,6 +4,7 @@ package com.urlive.service;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.userUrl.UserUrl;
+import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.web.dto.common.DtoFactory;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import com.urlive.web.dto.user.PasswordChangeRequest;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class UserService {
@@ -24,13 +24,16 @@ public class UserService {
     @Autowired
     public UserService(
             UserRepository userRepository,
+            UserUrlRepository userUrlRepository,
             PasswordService passwordService
     ) {
         this.userRepository = userRepository;
+        this.userUrlRepository = userUrlRepository;
         this.passwordService = passwordService;
     }
 
     private final UserRepository userRepository;
+    private final UserUrlRepository userUrlRepository;
     private final PasswordService passwordService;
 
     @Transactional
@@ -49,15 +52,18 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserUrlResponse> getUrlsByUser(Long id) {
-        User user = getUserEntityWithUrls(id);
-        return DtoFactory.getBoardDto(user);
+    public List<UserUrlResponse> getUserUrlResponses(Long id) {
+        List<UserUrl> userUrls = getUserUrls(id);
+        return DtoFactory.getBoardDto(userUrls);
+    }
+
+    private List<UserUrl> getUserUrls(Long id) {
+        return userUrlRepository.findUserUrls(id);
     }
 
     public boolean isExistingUrlOfUser(Long id, UrlCreateRequest urlCreateRequest) {
-        User user = getUserEntityWithUrls(id);
-        Set<UserUrl> urls = user.getUrls();
-        for (UserUrl url : urls) {
+        List<UserUrl> userUrls = getUserUrls(id);
+        for (UserUrl url : userUrls) {
             if (url.getOriginalUrl().equals(urlCreateRequest.originalUrl())) {
                 return true;
             }
@@ -67,14 +73,6 @@ public class UserService {
 
     public User getUserEntityWithoutUrls(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isEmpty()) {
-            throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
-        }
-        return optionalUser.get();
-    }
-
-    public User getUserEntityWithUrls(Long id) {
-        Optional<User> optionalUser = userRepository.findUserWithUrlsById(id);
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
         }

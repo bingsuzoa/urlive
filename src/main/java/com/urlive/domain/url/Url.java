@@ -55,6 +55,10 @@ public class Url extends BaseEntity {
         return views;
     }
 
+    public void saveView(View view) {
+        views.add(view);
+    }
+
     public Set<UserUrl> getUsers() {
         return users;
     }

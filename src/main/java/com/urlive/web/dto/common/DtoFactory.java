@@ -10,7 +10,6 @@ import com.urlive.web.dto.userUrl.UserUrlResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class DtoFactory {
 
@@ -23,30 +22,27 @@ public class DtoFactory {
         return new UserResponse(id, name, age, gender, country);
     }
 
-    public static List<UserUrlResponse> getBoardDto(User user) {
-        Set<UserUrl> urls = user.getUrls();
-        List<UserUrlResponse> userUrls = new ArrayList<>();
+    public static List<UserUrlResponse> getBoardDto(List<UserUrl> userUrls) {
+        List<UserUrlResponse> userUrlsResponse = new ArrayList<>();
 
-        for (UserUrl userUrl : urls) {
-            String name = user.getName();
+        for (UserUrl userUrl : userUrls) {
             String originalUrl = userUrl.getOriginalUrl();
             String shortUrl = userUrl.getShortUrl();
             String title = userUrl.getTitle();
             LocalDateTime createdAt = userUrl.getCreateTime();
             Long viewCount = userUrl.getViewCount();
 
-            userUrls.add(new UserUrlResponse(name, originalUrl, shortUrl, title, createdAt, viewCount));
+            userUrlsResponse.add(new UserUrlResponse(originalUrl, shortUrl, title, createdAt, viewCount));
         }
-        return userUrls;
+        return userUrlsResponse;
     }
 
     public static UserUrlResponse getUserUrlDto(UserUrl userUrl) {
-        String name = userUrl.getName();
         String originalUrl = userUrl.getOriginalUrl();
         String shortUrl = userUrl.getShortUrl();
         String title = userUrl.getTitle();
         LocalDateTime createdAt = userUrl.getCreateTime();
         Long viewCount = userUrl.getViewCount();
-        return new UserUrlResponse(name, originalUrl, shortUrl, title, createdAt, viewCount);
+        return new UserUrlResponse(originalUrl, shortUrl, title, createdAt, viewCount);
     }
 }

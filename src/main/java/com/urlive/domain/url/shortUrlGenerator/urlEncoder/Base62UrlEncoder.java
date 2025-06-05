@@ -2,9 +2,10 @@ package com.urlive.domain.url.shortUrlGenerator.urlEncoder;
 
 
 import com.urlive.domain.url.Url;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-//@Primary
+@Primary
 @Component
 public class Base62UrlEncoder implements UrlEncoder {
     private static final String BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

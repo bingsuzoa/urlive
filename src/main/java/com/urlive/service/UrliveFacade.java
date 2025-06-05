@@ -56,7 +56,7 @@ public class UrliveFacade {
     }
 
     public List<UserUrlResponse> getUrlsByUser(Long id) {
-        return userService.getUrlsByUser(id);
+        return userService.getUserUrlResponses(id);
     }
 
     public String decodeShortUrl(String shortUrl) {

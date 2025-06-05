@@ -8,6 +8,7 @@ import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.domain.view.View;
 import com.urlive.domain.view.ViewRepository;
+import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
 
@@ -33,6 +35,9 @@ public class UrlRepositoryTest {
 
     @Autowired
     private ViewRepository viewRepository;
+
+    @Autowired
+    private EntityManager em;
 
     private static final String originalUrl = "http://test.com";
     private static final String shortUrl = "testShortUrl";
@@ -99,12 +104,25 @@ public class UrlRepositoryTest {
     void 연관관계_Url_view() {
         Url url = setUp();
 
-        View view1 = new View(url, LocalDateTime.of(2025, 06, 04, 0, 0));
+        View view1 = new View(url);
         viewRepository.save(view1);
 
-        View view2 = new View(url, LocalDateTime.of(2025, 06, 04, 0, 0));
+        View view2 = new View(url);
         viewRepository.save(view2);
 
         Assertions.assertThat(url.getViews().size()).isEqualTo(2);
+    }
+
+    /// ////예외 테스트
+    @Test
+    @DisplayName("이미 저장된 originalUrl 저장 시도 시 예외 발생")
+    void 중복_URL_저장시_예외() {
+        setUp();
+        urlRepository.flush();
+
+        org.junit.jupiter.api.Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
+            urlRepository.saveAndFlush(new Url(originalUrl, "shortUrl"));
+        });
+        em.clear();
     }
 }
