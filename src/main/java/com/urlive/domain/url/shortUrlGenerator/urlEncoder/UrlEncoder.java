@@ -1,4 +1,4 @@
-package com.urlive.domain.urlEncoder;
+package com.urlive.domain.url.shortUrlGenerator.urlEncoder;
 
 import org.springframework.stereotype.Component;
 

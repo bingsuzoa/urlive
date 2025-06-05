@@ -10,6 +10,11 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("select distinct u from User u left join fetch u.urls where u.id = :id")
+    @Query("""
+            select distinct u from User u
+            left join fetch u.urls uu
+            left join fetch uu.url url
+            where u.id = :id
+            """)
     Optional<User> findUserWithUrlsById(@Param("id") Long id);
 }

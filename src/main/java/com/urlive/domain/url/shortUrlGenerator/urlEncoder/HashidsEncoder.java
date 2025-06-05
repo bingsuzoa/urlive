@@ -1,4 +1,4 @@
-package com.urlive.domain.urlEncoder;
+package com.urlive.domain.url.shortUrlGenerator.urlEncoder;
 
 
 import com.urlive.domain.url.Url;
