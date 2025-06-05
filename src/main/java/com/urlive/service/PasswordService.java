@@ -21,8 +21,8 @@ public class PasswordService {
         this.passwordHistoryRepository = passwordHistoryRepository;
     }
 
-    private static final int FIRST_PAGE = 0;
-    private static final int PASSWORD_HISTORY_LIMIT = 2;
+    public static final int FIRST_PAGE = 0;
+    public static final int PASSWORD_HISTORY_LIMIT = 2;
     private static final String PASSWORD_ALREADY_USED = "기존에 사용하던 비밀번호와 동일합니다. 다시 작성해주세요.";
 
     private final PasswordEncoder passwordEncoder;

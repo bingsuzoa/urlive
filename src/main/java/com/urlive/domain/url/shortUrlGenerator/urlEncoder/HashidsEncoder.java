@@ -6,7 +6,7 @@ import org.hashids.Hashids;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
-@Primary
+//@Primary
 @Component
 public class HashidsEncoder implements UrlEncoder {
 

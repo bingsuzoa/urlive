@@ -3,6 +3,8 @@ package com.urlive.service;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
 import com.urlive.domain.url.shortUrlGenerator.ShortUrlGenerator;
+import com.urlive.domain.view.View;
+import com.urlive.domain.view.ViewRepository;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,15 +21,18 @@ public class UrlService {
     @Autowired
     public UrlService(
             UrlRepository urlRepository,
+            ViewRepository viewRepository,
             ShortUrlGenerator shortUrlGenerator
     ) {
         this.urlRepository = urlRepository;
+        this.viewRepository = viewRepository;
         this.shortUrlGenerator = shortUrlGenerator;
     }
 
     private static final String INVALID_ORIGINAL_URL = "유효하지 않은 URL 입니다.";
 
     private final UrlRepository urlRepository;
+    private final ViewRepository viewRepository;
     private final ShortUrlGenerator shortUrlGenerator;
 
     @Transactional
@@ -36,15 +41,17 @@ public class UrlService {
         if (optionalUrl.isEmpty()) {
             throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
         }
-        Url url = optionalUrl.get();
-        increaseViewCount(url);
-        return url.getOriginalUrl();
+        recordView(optionalUrl.get());
+        return recordView(optionalUrl.get()).getOriginalUrl();
     }
 
-    private void increaseViewCount(Url url) {
+    private Url recordView(Url url) {
         if (urlRepository.increaseViewCount(url.getId()) == 0) {
             throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
         }
+        Url updatedUrl = urlRepository.findById(url.getId()).get();
+        url.saveView(viewRepository.save(new View(updatedUrl)));
+        return updatedUrl;
     }
 
     @Transactional

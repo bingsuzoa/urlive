@@ -5,6 +5,7 @@ import com.urlive.domain.user.passwordHistory.PasswordHistory;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.service.PasswordService;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.parameters.P;
 
 import java.util.HashSet;
