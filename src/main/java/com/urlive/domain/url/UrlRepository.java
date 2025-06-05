@@ -15,7 +15,7 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
 
     Optional<Url> findUrlByShortUrl(String shortUrl);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("update Url u set u.viewCount = u.viewCount + 1 where u.id = :id")
     int increaseViewCount(@Param("id") Long id);
 }

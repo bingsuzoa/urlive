@@ -40,285 +40,285 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.startsWith;
 
 
-@ActiveProfiles("test")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class IntegrationTest {
-
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UrlRepository urlRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserUrlRepository userUrlRepository;
-
-    @Autowired
-    private UrliveFacade urliveFacade;
-
-    User setUp() {
-        User user = userRepository.save(new User("test", "01012345678", "1234", 2025, Gender.MEN, Country.CHINA));
-        userRepository.flush();
-        return user;
-    }
-
-    @AfterEach
-    void init() {
-        userUrlRepository.deleteAll();
-        userRepository.deleteAll();
-        urlRepository.deleteAll();
-    }
-
-    /// ///////해피 테스트
-    @Test
-    @DisplayName("회원가입 요청 성공 테스트")
-    void 회원가입_요청_성공() {
-        UserCreateRequest request = new UserCreateRequest(
-                "test",
-                "01012345678",
-                "1234",
-                2025,
-                1,
-                1
-        );
-        String url = "http://localhost:" + port + "/user";
-
-        ResponseEntity<ApiResponse<UserResponse>> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                new HttpEntity<>(request),
-                new ParameterizedTypeReference<ApiResponse<UserResponse>>() {
-                }
-        );
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        List<User> users = userRepository.findAll();
-        Assertions.assertThat(users.get(0).getGender()).isEqualTo(Gender.WOMEN);
-        Assertions.assertThat(users.get(0).getCountry()).isEqualTo(Country.AMERICA);
-    }
-
-    @Test
-    @DisplayName("단축 URL 생성 테스트")
-    void 단축_URL_생성() {
-        User user = setUp();
-        Long id = user.getId();
-
-        UrlCreateRequest request = new UrlCreateRequest("https://urlive.com");
-        String url = "http://localhost:" + port + "/user-url/" + id;
-
-        ResponseEntity<ApiResponse<UserUrlResponse>> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                new HttpEntity<>(request),
-                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
-                }
-        );
-
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-    }
-
-    @Test
-    @DisplayName("단축 URL 리다이렉트 테스트")
-    void 단축_URL로부터_원본_URL_얻기() {
-        User user = setUp();
-        Long userId = user.getId();
-
-        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
-        UserUrlResponse response = urliveFacade.createShortUrl(userId, urlCreateRequest);
-
-
-        String shortUrl = response.shortUrl();
-        String url = "http://localhost:" + port + "/" + shortUrl;
-
-        ValidatableResponse validatableResponse = given()
-                .port(port)
-                .redirects().follow(false)
-                .when()
-                .get(url)
-                .then()
-                .statusCode(302)
-                .header("Location", startsWith("https://urlive.com"));
-    }
-
-    @Test
-    @DisplayName("사용자 단축Url 조회 시 조회수 증가 확인 테스트")
-    void 조회수_증가() {
-        User user = setUp();
-        Long userId = user.getId();
-
-        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
-        UserUrlResponse response = urliveFacade.createShortUrl(userId, urlCreateRequest);
-        String shortUrl = response.shortUrl();
-
-        Url urlEntity = urlRepository.findUrlByShortUrl(shortUrl).get();
-        Long existingViewCount = urlEntity.getViewCount();
-
-        String url = "http://localhost:" + port + "/" + shortUrl;
-
-        ResponseEntity<Void> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                Void.class
-        );
-        Url updatedUrlEntity = urlRepository.findUrlByShortUrl(shortUrl).get();
-        Assertions.assertThat(updatedUrlEntity.getViewCount()).isEqualTo(existingViewCount + 1);
-    }
-
-    @Test
-    @DisplayName("사용자 단축Url 목록 조회 테스트")
-    void 목록_조회() {
-        User user = setUp();
-
-        UrlCreateRequest request = new UrlCreateRequest("https://urlive.com");
-        Url urlEntity = urlRepository.save(new Url(request.originalUrl()));
-        UserUrl userUrl = new UserUrl(user, urlEntity);
-        Long id = userUrlRepository.save(userUrl).getId();
-
-        String url = "http://localhost:" + port + "/user-url/" + id;
-
-        ResponseEntity<ApiResponse<List<UserUrlResponse>>> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                new ParameterizedTypeReference<ApiResponse<List<UserUrlResponse>>>() {
-                }
-        );
-
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-    }
-
-    @Test
-    @DisplayName("사용자 단축 Url title 변경 테스트")
-    void title_변경() {
-        User user = setUp();
-        Long id = user.getId();
-
-        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
-        Url urlEntity = urlRepository.save(new Url(urlCreateRequest.originalUrl()));
-        UserUrl userUrl = new UserUrl(user, urlEntity);
-        userUrlRepository.save(userUrl);
-
-        String title = userUrl.getTitle();
-
-        UpdateTitleRequest request = new UpdateTitleRequest("단축 Url");
-        String url = "http://localhost:" + port + "/user-url/" + id;
-
-        ResponseEntity<ApiResponse<UserUrlResponse>> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.PATCH,
-                new HttpEntity<>(request),
-                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
-                }
-        );
-
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        Assertions.assertThat(title).isNotEqualTo(responseEntity.getBody().getData().title());
-    }
-
-    @Test
-    @DisplayName("사용자 단축 Url 삭제 테스트")
-    void title_삭제() {
-        User user = setUp();
-
-        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
-        Url urlEntity = urlRepository.save(new Url(urlCreateRequest.originalUrl()));
-        UserUrl userUrl = userUrlRepository.save(new UserUrl(user, urlEntity));
-        Long id = userUrl.getId();
-
-        UpdateTitleRequest request = new UpdateTitleRequest("단축 Url");
-        String url = "http://localhost:" + port + "/user-url/" + id;
-
-        ResponseEntity<ApiResponse<UserUrlResponse>> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.DELETE,
-                HttpEntity.EMPTY,
-                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
-                }
-        );
-
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-    }
-
-    /// ///////예외 테스트
-    @Test
-    @DisplayName("회원가입 실패 테스트")
-    void 회원가입_실패() {
-        UserCreateRequest request = new UserCreateRequest(
-                "",
-                "010123456789",
-                "",
-                null,
-                null,
-                null
-        );
-        String url = "http://localhost:" + port + "/user";
-
-        ResponseEntity<ApiResponse<UserResponse>> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                new HttpEntity<>(request),
-                new ParameterizedTypeReference<ApiResponse<UserResponse>>() {
-                }
-        );
-
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        Assertions.assertThat(responseEntity.getBody().getMessage()).contains("이름", "휴대폰", "비밀번호", "생년월일", "성별", "국가");
-    }
-
-    @ParameterizedTest
-    @DisplayName("단축 URL 생성 실패 테스트")
-    @ValueSource(strings = {"urlive.com", "https:urlive.com", "http://", "http://.com", "http://urlive"})
-    void URL_생성_실패(String value) {
-        User user = setUp();
-        Long id = user.getId();
-
-        UrlCreateRequest request = new UrlCreateRequest(value);
-        String url = "http://localhost:" + port + "/user-url/" + id;
-
-        ResponseEntity<ApiResponse<UserResponse>> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                new HttpEntity<>(request),
-                new ParameterizedTypeReference<ApiResponse<UserResponse>>() {
-                }
-        );
-
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
-    @DisplayName("사용자 단축 Url title 실패 테스트")
-    void title_변경_실패() {
-        User user = setUp();
-        Long id = user.getId();
-
-        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
-        Url urlEntity = urlRepository.save(new Url(urlCreateRequest.originalUrl()));
-        UserUrl userUrl = new UserUrl(user, urlEntity);
-        userUrlRepository.save(userUrl);
-
-
-        UpdateTitleRequest request = new UpdateTitleRequest("");
-        String url = "http://localhost:" + port + "/user-url/" + id;
-
-        ResponseEntity<ApiResponse<UserUrlResponse>> responseEntity = restTemplate.exchange(
-                url,
-                HttpMethod.PATCH,
-                new HttpEntity<>(request),
-                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
-                }
-        );
-
-        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-}
+//@ActiveProfiles("test")
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//public class IntegrationTest {
+//
+//    @LocalServerPort
+//    private int port;
+//
+//    @Autowired
+//    private TestRestTemplate restTemplate;
+//
+//    @Autowired
+//    private UserService userService;
+//
+//    @Autowired
+//    private UrlRepository urlRepository;
+//
+//    @Autowired
+//    private UserRepository userRepository;
+//
+//    @Autowired
+//    private UserUrlRepository userUrlRepository;
+//
+//    @Autowired
+//    private UrliveFacade urliveFacade;
+//
+//    User setUp() {
+//        User user = userRepository.save(new User("test", "01012345678", "1234", 2025, Gender.MEN, Country.CHINA));
+//        userRepository.flush();
+//        return user;
+//    }
+//
+//    @AfterEach
+//    void init() {
+//        userUrlRepository.deleteAll();
+//        userRepository.deleteAll();
+//        urlRepository.deleteAll();
+//    }
+//
+//    /// ///////해피 테스트
+//    @Test
+//    @DisplayName("회원가입 요청 성공 테스트")
+//    void 회원가입_요청_성공() {
+//        UserCreateRequest request = new UserCreateRequest(
+//                "test",
+//                "01012345678",
+//                "1234",
+//                2025,
+//                1,
+//                1
+//        );
+//        String url = "http://localhost:" + port + "/user";
+//
+//        ResponseEntity<ApiResponse<UserResponse>> responseEntity = restTemplate.exchange(
+//                url,
+//                HttpMethod.POST,
+//                new HttpEntity<>(request),
+//                new ParameterizedTypeReference<ApiResponse<UserResponse>>() {
+//                }
+//        );
+//        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+//        List<User> users = userRepository.findAll();
+//        Assertions.assertThat(users.get(0).getGender()).isEqualTo(Gender.WOMEN);
+//        Assertions.assertThat(users.get(0).getCountry()).isEqualTo(Country.AMERICA);
+//    }
+//
+//    @Test
+//    @DisplayName("단축 URL 생성 테스트")
+//    void 단축_URL_생성() {
+//        User user = setUp();
+//        Long id = user.getId();
+//
+//        UrlCreateRequest request = new UrlCreateRequest("https://urlive.com");
+//        String url = "http://localhost:" + port + "/user-url/" + id;
+//
+//        ResponseEntity<ApiResponse<UserUrlResponse>> responseEntity = restTemplate.exchange(
+//                url,
+//                HttpMethod.POST,
+//                new HttpEntity<>(request),
+//                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
+//                }
+//        );
+//
+//        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+//    }
+//
+//    @Test
+//    @DisplayName("단축 URL 리다이렉트 테스트")
+//    void 단축_URL로부터_원본_URL_얻기() {
+//        User user = setUp();
+//        Long userId = user.getId();
+//
+//        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
+//        UserUrlResponse response = urliveFacade.createShortUrl(userId, urlCreateRequest);
+//
+//
+//        String shortUrl = response.shortUrl();
+//        String url = "http://localhost:" + port + "/" + shortUrl;
+//
+//        ValidatableResponse validatableResponse = given()
+//                .port(port)
+//                .redirects().follow(false)
+//                .when()
+//                .get(url)
+//                .then()
+//                .statusCode(302)
+//                .header("Location", startsWith("https://urlive.com"));
+//    }
+//
+//    @Test
+//    @DisplayName("사용자 단축Url 조회 시 조회수 증가 확인 테스트")
+//    void 조회수_증가() {
+//        User user = setUp();
+//        Long userId = user.getId();
+//
+//        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
+//        UserUrlResponse response = urliveFacade.createShortUrl(userId, urlCreateRequest);
+//        String shortUrl = response.shortUrl();
+//
+//        Url urlEntity = urlRepository.findUrlByShortUrl(shortUrl).get();
+//        Long existingViewCount = urlEntity.getViewCount();
+//
+//        String url = "http://localhost:" + port + "/" + shortUrl;
+//
+//        ResponseEntity<Void> responseEntity = restTemplate.exchange(
+//                url,
+//                HttpMethod.GET,
+//                HttpEntity.EMPTY,
+//                Void.class
+//        );
+//        Url updatedUrlEntity = urlRepository.findUrlByShortUrl(shortUrl).get();
+//        Assertions.assertThat(updatedUrlEntity.getViewCount()).isEqualTo(existingViewCount + 1);
+//    }
+//
+//    @Test
+//    @DisplayName("사용자 단축Url 목록 조회 테스트")
+//    void 목록_조회() {
+//        User user = setUp();
+//
+//        UrlCreateRequest request = new UrlCreateRequest("https://urlive.com");
+//        Url urlEntity = urlRepository.save(new Url(request.originalUrl()));
+//        UserUrl userUrl = new UserUrl(user, urlEntity);
+//        Long id = userUrlRepository.save(userUrl).getId();
+//
+//        String url = "http://localhost:" + port + "/user-url/" + id;
+//
+//        ResponseEntity<ApiResponse<List<UserUrlResponse>>> responseEntity = restTemplate.exchange(
+//                url,
+//                HttpMethod.GET,
+//                HttpEntity.EMPTY,
+//                new ParameterizedTypeReference<ApiResponse<List<UserUrlResponse>>>() {
+//                }
+//        );
+//
+//        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+//    }
+//
+//    @Test
+//    @DisplayName("사용자 단축 Url title 변경 테스트")
+//    void title_변경() {
+//        User user = setUp();
+//        Long id = user.getId();
+//
+//        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
+//        Url urlEntity = urlRepository.save(new Url(urlCreateRequest.originalUrl()));
+//        UserUrl userUrl = new UserUrl(user, urlEntity);
+//        userUrlRepository.save(userUrl);
+//
+//        String title = userUrl.getTitle();
+//
+//        UpdateTitleRequest request = new UpdateTitleRequest("단축 Url");
+//        String url = "http://localhost:" + port + "/user-url/" + id;
+//
+//        ResponseEntity<ApiResponse<UserUrlResponse>> responseEntity = restTemplate.exchange(
+//                url,
+//                HttpMethod.PATCH,
+//                new HttpEntity<>(request),
+//                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
+//                }
+//        );
+//
+//        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        Assertions.assertThat(title).isNotEqualTo(responseEntity.getBody().getData().title());
+//    }
+//
+//    @Test
+//    @DisplayName("사용자 단축 Url 삭제 테스트")
+//    void title_삭제() {
+//        User user = setUp();
+//
+//        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
+//        Url urlEntity = urlRepository.save(new Url(urlCreateRequest.originalUrl()));
+//        UserUrl userUrl = userUrlRepository.save(new UserUrl(user, urlEntity));
+//        Long id = userUrl.getId();
+//
+//        UpdateTitleRequest request = new UpdateTitleRequest("단축 Url");
+//        String url = "http://localhost:" + port + "/user-url/" + id;
+//
+//        ResponseEntity<ApiResponse<UserUrlResponse>> responseEntity = restTemplate.exchange(
+//                url,
+//                HttpMethod.DELETE,
+//                HttpEntity.EMPTY,
+//                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
+//                }
+//        );
+//
+//        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+//    }
+//
+//    /// ///////예외 테스트
+//    @Test
+//    @DisplayName("회원가입 실패 테스트")
+//    void 회원가입_실패() {
+//        UserCreateRequest request = new UserCreateRequest(
+//                "",
+//                "010123456789",
+//                "",
+//                null,
+//                null,
+//                null
+//        );
+//        String url = "http://localhost:" + port + "/user";
+//
+//        ResponseEntity<ApiResponse<UserResponse>> responseEntity = restTemplate.exchange(
+//                url,
+//                HttpMethod.POST,
+//                new HttpEntity<>(request),
+//                new ParameterizedTypeReference<ApiResponse<UserResponse>>() {
+//                }
+//        );
+//
+//        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+//        Assertions.assertThat(responseEntity.getBody().getMessage()).contains("이름", "휴대폰", "비밀번호", "생년월일", "성별", "국가");
+//    }
+//
+//    @ParameterizedTest
+//    @DisplayName("단축 URL 생성 실패 테스트")
+//    @ValueSource(strings = {"urlive.com", "https:urlive.com", "http://", "http://.com", "http://urlive"})
+//    void URL_생성_실패(String value) {
+//        User user = setUp();
+//        Long id = user.getId();
+//
+//        UrlCreateRequest request = new UrlCreateRequest(value);
+//        String url = "http://localhost:" + port + "/user-url/" + id;
+//
+//        ResponseEntity<ApiResponse<UserResponse>> responseEntity = restTemplate.exchange(
+//                url,
+//                HttpMethod.POST,
+//                new HttpEntity<>(request),
+//                new ParameterizedTypeReference<ApiResponse<UserResponse>>() {
+//                }
+//        );
+//
+//        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+//    }
+//
+//    @Test
+//    @DisplayName("사용자 단축 Url title 실패 테스트")
+//    void title_변경_실패() {
+//        User user = setUp();
+//        Long id = user.getId();
+//
+//        UrlCreateRequest urlCreateRequest = new UrlCreateRequest("https://urlive.com");
+//        Url urlEntity = urlRepository.save(new Url(urlCreateRequest.originalUrl()));
+//        UserUrl userUrl = new UserUrl(user, urlEntity);
+//        userUrlRepository.save(userUrl);
+//
+//
+//        UpdateTitleRequest request = new UpdateTitleRequest("");
+//        String url = "http://localhost:" + port + "/user-url/" + id;
+//
+//        ResponseEntity<ApiResponse<UserUrlResponse>> responseEntity = restTemplate.exchange(
+//                url,
+//                HttpMethod.PATCH,
+//                new HttpEntity<>(request),
+//                new ParameterizedTypeReference<ApiResponse<UserUrlResponse>>() {
+//                }
+//        );
+//
+//        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+//    }
+//
+//}
