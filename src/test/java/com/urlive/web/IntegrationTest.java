@@ -144,7 +144,7 @@ public class IntegrationTest {
                 .when()
                 .get(url)
                 .then()
-                .statusCode(301)
+                .statusCode(302)
                 .header("Location", startsWith("https://urlive.com"));
     }
 

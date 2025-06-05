@@ -1,8 +1,7 @@
-package com.urlive.domain.urlEncoder;
+package com.urlive.domain.url.shortUrlGenerator.urlEncoder;
 
 
 import com.urlive.domain.url.Url;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 //@Primary

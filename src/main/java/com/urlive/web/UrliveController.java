@@ -62,7 +62,7 @@ public class UrliveController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(originalUrl));
-        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+        return ResponseEntity.status(HttpStatus.FOUND)
                 .headers(headers)
                 .build();
     }

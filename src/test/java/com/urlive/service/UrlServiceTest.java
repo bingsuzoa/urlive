@@ -2,8 +2,8 @@ package com.urlive.service;
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
-import com.urlive.domain.urlEncoder.Base62UrlEncoder;
-import com.urlive.domain.urlEncoder.UrlEncoder;
+import com.urlive.domain.url.shortUrlGenerator.urlEncoder.Base62UrlEncoder;
+import com.urlive.domain.url.shortUrlGenerator.urlEncoder.UrlEncoder;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

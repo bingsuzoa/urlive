@@ -21,8 +21,9 @@ public class Url extends BaseEntity {
 
     }
 
-    public Url(String originalUrl) {
+    public Url(String originalUrl, String shortUrl) {
         this.originalUrl = originalUrl;
+        this.shortUrl = shortUrl;
     }
 
     @Column(unique = true, nullable = false)
@@ -48,10 +49,6 @@ public class Url extends BaseEntity {
 
     public String getShortUrl() {
         return shortUrl;
-    }
-
-    public void createShortKey(String shortKey) {
-        this.shortUrl = shortKey;
     }
 
     public List<View> getViews() {

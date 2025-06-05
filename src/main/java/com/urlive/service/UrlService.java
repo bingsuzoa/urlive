@@ -2,15 +2,15 @@ package com.urlive.service;
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
-import com.urlive.domain.urlEncoder.UrlEncoder;
+import com.urlive.domain.url.shortUrlGenerator.ShortUrlGenerator;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -19,16 +19,16 @@ public class UrlService {
     @Autowired
     public UrlService(
             UrlRepository urlRepository,
-            UrlEncoder urlEncoder
+            ShortUrlGenerator shortUrlGenerator
     ) {
         this.urlRepository = urlRepository;
-        this.urlEncoder = urlEncoder;
+        this.shortUrlGenerator = shortUrlGenerator;
     }
 
     private static final String INVALID_ORIGINAL_URL = "유효하지 않은 URL 입니다.";
 
     private final UrlRepository urlRepository;
-    private final UrlEncoder urlEncoder;
+    private final ShortUrlGenerator shortUrlGenerator;
 
     @Transactional
     public String decodeShortUrl(String shortUrl) {
@@ -42,7 +42,7 @@ public class UrlService {
     }
 
     private void increaseViewCount(Url url) {
-        if(urlRepository.increaseViewCount(url.getId()) == 0) {
+        if (urlRepository.increaseViewCount(url.getId()) == 0) {
             throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
         }
     }
@@ -50,14 +50,12 @@ public class UrlService {
     @Transactional
     public Url findOrCreateShortUrl(UrlCreateRequest urlCreateRequest) {
         String originalUrl = normalize(urlCreateRequest.originalUrl());
-        Optional<Url> optionalUrl = urlRepository.findUrlByOriginalUrl(originalUrl);
-        if (optionalUrl.isEmpty()) {
-            Url url = urlRepository.save(new Url(originalUrl));
-            String shortUrl = urlEncoder.encode(url.getId());
-            url.createShortKey(shortUrl);
-            return url;
+        try {
+            String shortUrl = shortUrlGenerator.generateShortUrl();
+            return urlRepository.save(new Url(originalUrl, shortUrl));
+        } catch (DataIntegrityViolationException e) {
+            return urlRepository.findUrlByOriginalUrl(originalUrl).get();
         }
-        return optionalUrl.get();
     }
 
     private String normalize(String rawUrl) {

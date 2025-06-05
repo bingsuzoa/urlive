@@ -1,6 +1,5 @@
-package com.urlive.domain.urlEncoder;
+package com.urlive.domain.url.shortUrlGenerator.urlEncoder;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
