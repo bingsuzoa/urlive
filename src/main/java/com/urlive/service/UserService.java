@@ -4,7 +4,6 @@ package com.urlive.service;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.user.option.country.Country;
-import com.urlive.domain.user.option.country.CountryService;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.web.dto.common.DtoFactory;

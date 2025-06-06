@@ -1,6 +1,8 @@
-package com.urlive.domain.user.option.country;
+package com.urlive.service;
 
 
+import com.urlive.domain.user.option.country.Country;
+import com.urlive.domain.user.option.country.CountryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

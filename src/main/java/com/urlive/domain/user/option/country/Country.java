@@ -10,7 +10,13 @@ import java.util.List;
 @Entity
 public class Country {
 
-    public Country(String isoCode, String name) {
+    protected Country() {
+
+    }
+
+    public Country(String isoCode,
+                   String name
+    ) {
         this.isoCode = isoCode;
         this.name = name;
     }
@@ -19,7 +25,7 @@ public class Country {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 2, nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String isoCode;
 
     @Column(nullable = false)
