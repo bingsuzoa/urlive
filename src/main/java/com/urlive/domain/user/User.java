@@ -62,7 +62,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private Set<UserUrl> urls = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private Set<PasswordHistory> passwordHistories = new HashSet<>();
 
     public String getName() {
@@ -79,6 +79,8 @@ public class User extends BaseEntity {
 
     public void changePassword(String newPassword) {
         this.password = newPassword;
+        PasswordHistory passwordHistory = new PasswordHistory(this, newPassword);
+        passwordHistories.add(passwordHistory);
     }
 
     public int getAge() {
