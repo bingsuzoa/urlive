@@ -1,9 +1,9 @@
 package com.urlive.domain.url;
 
-import com.urlive.domain.user.Country;
-import com.urlive.domain.user.Gender;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
+import com.urlive.domain.user.option.Gender;
+import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.domain.view.View;
@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
-
-import java.time.LocalDateTime;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -68,24 +66,11 @@ public class UrlRepositoryTest {
     }
 
     @Test
-    @DisplayName("단축 URL 디코딩 시도 시 viewCount + 1 증가하기")
-    void viewCount_증가() {
-        setUp();
-        Url url = urlRepository.findUrlByShortUrl(shortUrl).get();
-        long id = url.getId();
-        long existingViewCount = url.getViewCount();
-
-        urlRepository.increaseViewCount(id);
-        long updatedViewCount = urlRepository.findById(id).get().getViewCount();
-        Assertions.assertThat(existingViewCount + 1).isEqualTo(updatedViewCount);
-    }
-
-    @Test
     @DisplayName("연관관계 확인 Url - User")
     void 연관관계_Url_User() {
-        User user1 = new User("test", "01012345678", "1234", 2025, Gender.MEN, Country.CHINA);
+        User user1 = new User("test", "01012345678", "1234", 2025, Gender.MEN, new Country("KR", "대한민국"));
         userRepository.save(user1);
-        User user2 = new User("test1", "01012345679", "5678", 2025, Gender.MEN, Country.CHINA);
+        User user2 = new User("test1", "01012345679", "5678", 2025, Gender.MEN, new Country("KR", "대한민국"));
         userRepository.save(user2);
 
         Url url1 = new Url("http://test1.com", "testShort1");

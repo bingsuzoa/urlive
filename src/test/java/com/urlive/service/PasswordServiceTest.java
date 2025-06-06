@@ -1,8 +1,8 @@
 package com.urlive.service;
 
-import com.urlive.domain.user.Country;
-import com.urlive.domain.user.Gender;
+import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.User;
+import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.user.passwordHistory.PasswordHistory;
 import com.urlive.domain.user.passwordHistory.PasswordHistoryRepository;
 import org.assertj.core.api.Assertions;
@@ -58,7 +58,7 @@ public class PasswordServiceTest {
         String rawPassword = "test124";
         String existingPassword = passwordService.encode("test123");
 
-        User user = new User("test", "01012345678", existingPassword, 20250604, Gender.WOMEN, Country.AMERICA);
+        User user = new User("test", "01012345678", existingPassword, 20250604, Gender.WOMEN, new Country("KR", "대한민국"));
         List<PasswordHistory> histories = List.of(new PasswordHistory(user, existingPassword));
         when(passwordHistoryRepository.findRecentHistories(any(), any())).thenReturn(histories);
 
@@ -80,7 +80,7 @@ public class PasswordServiceTest {
         String rawPassword = "test123";
         String existingPassword = passwordService.encode("test123");
 
-        User user = new User("test", "01012345678", existingPassword, 20250604, Gender.WOMEN, Country.AMERICA);
+        User user = new User("test", "01012345678", existingPassword, 20250604, Gender.WOMEN, new Country("KR", "대한민국"));
         List<PasswordHistory> histories = List.of(new PasswordHistory(user, existingPassword));
         when(passwordHistoryRepository.findRecentHistories(any(), any())).thenReturn(histories);
 

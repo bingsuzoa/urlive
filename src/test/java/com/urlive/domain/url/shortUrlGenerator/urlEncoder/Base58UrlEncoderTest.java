@@ -1,6 +1,5 @@
 package com.urlive.domain.url.shortUrlGenerator.urlEncoder;
 
-import com.urlive.domain.url.shortUrlGenerator.urlEncoder.Base58UrlEncoder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

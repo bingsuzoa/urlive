@@ -1,9 +1,10 @@
 package com.urlive.domain.user.passwordHistory;
 
-import com.urlive.domain.user.Country;
-import com.urlive.domain.user.Gender;
+
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
+import com.urlive.domain.user.option.Gender;
+import com.urlive.domain.user.option.country.Country;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ public class PasswordHistoryRepositoryTest {
     private UserRepository userRepository;
 
     User setUp() {
-        return userRepository.save(new User("test", "01012345678", "1234", 2025, Gender.MEN, Country.CHINA));
+        return userRepository.save(new User("test", "01012345678", "1234", 2025, Gender.MEN, new Country("KR", "대한민국")));
     }
 
     @Test

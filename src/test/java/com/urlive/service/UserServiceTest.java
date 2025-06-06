@@ -1,13 +1,12 @@
 package com.urlive.service;
 
 import com.urlive.domain.url.Url;
-import com.urlive.domain.user.Country;
-import com.urlive.domain.user.Gender;
+import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
+import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
-import com.urlive.web.dto.common.DtoFactory;
 import com.urlive.web.dto.user.PasswordChangeRequest;
 import com.urlive.web.dto.user.UserCreateRequest;
 import org.assertj.core.api.Assertions;
@@ -44,20 +43,20 @@ public class UserServiceTest {
     @DisplayName("User객체 저장 테스트")
     void 객체_저장() {
         UserCreateRequest userCreateRequest =
-                new UserCreateRequest("test", "01012345678", "test123", 20250604, 1, 1);
+                new UserCreateRequest("test", "01012345678", "test123", 20250604, 1, "KR");
         String encodedPassword = "encodedPassword";
         when(passwordService.encode(any())).thenReturn(encodedPassword);
-        User user = new User("test", "01012345678", encodedPassword, 20250604, Gender.WOMEN, Country.AMERICA);
+        User user = new User("test", "01012345678", encodedPassword, 20250604, Gender.WOMEN, new Country("KR", "대한민국"));
         when(userRepository.save(any())).thenReturn(user);
 
         Assertions.assertThat(userService.saveUser(userCreateRequest)).isNotNull();
-        Assertions.assertThat(userService.saveUser(userCreateRequest).country()).isEqualTo(Country.AMERICA);
+        Assertions.assertThat(userService.saveUser(userCreateRequest).gender()).isEqualTo(Gender.WOMEN);
     }
 
     @Test
     @DisplayName("비밀번호 변경 테스트")
     void 비밀번호_변경() {
-        User user = new User("test", "01012345678", "test123", 20250604, Gender.WOMEN, Country.AMERICA);
+        User user = new User("test", "01012345678", "test123", 20250604, Gender.WOMEN, new Country("KR", "대한민국"));
         when(userRepository.findById(any())).thenReturn(Optional.of(user));
         String encodedPassword = "encodedPassword";
         when(passwordService.changePassword(any(), any())).thenReturn(encodedPassword);
@@ -65,13 +64,13 @@ public class UserServiceTest {
         PasswordChangeRequest request = new PasswordChangeRequest("test123");
 
         Assertions.assertThat(userService.changePassword(1L, request)).isNotNull();
-        Assertions.assertThat(userService.changePassword(1L, request).country()).isEqualTo(Country.AMERICA);
+        Assertions.assertThat(userService.changePassword(1L, request).gender()).isEqualTo(Gender.WOMEN);
     }
 
     @Test
     @DisplayName("사용자가 가지고 있는 URL 목록 가져오는 테스트")
     void url_목록_가져오기() {
-        User user = new User("test", "01012345678", "1234", 2025, Gender.MEN, Country.CHINA);
+        User user = new User("test", "01012345678", "1234", 2025, Gender.MEN, new Country("KR", "대한민국"));
         Url url1 = new Url("http://test1.com", "test1ShortUrl");
         UserUrl userUrl1 = new UserUrl(user, url1);
         Url url2 = new Url("http://test2.com", "test2ShortUrl");

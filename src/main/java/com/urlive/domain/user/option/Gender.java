@@ -1,4 +1,4 @@
-package com.urlive.domain.user;
+package com.urlive.domain.user.option;
 
 import java.util.Arrays;
 

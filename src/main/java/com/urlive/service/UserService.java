@@ -3,6 +3,8 @@ package com.urlive.service;
 
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
+import com.urlive.domain.user.option.country.Country;
+import com.urlive.domain.user.option.country.CountryService;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.web.dto.common.DtoFactory;
@@ -25,21 +27,25 @@ public class UserService {
     public UserService(
             UserRepository userRepository,
             UserUrlRepository userUrlRepository,
+            CountryService countryService,
             PasswordService passwordService
     ) {
         this.userRepository = userRepository;
         this.userUrlRepository = userUrlRepository;
+        this.countryService = countryService;
         this.passwordService = passwordService;
     }
 
     private final UserRepository userRepository;
     private final UserUrlRepository userUrlRepository;
+    private final CountryService countryService;
     private final PasswordService passwordService;
 
     @Transactional
     public UserResponse saveUser(UserCreateRequest userCreateRequest) {
         String encodedPassword = passwordService.encode(userCreateRequest.password());
-        User user = userRepository.save(userCreateRequest.toEntityWithEncodedPassword(encodedPassword));
+        Country country = countryService.findByIsoCode(userCreateRequest.isoCode());
+        User user = userRepository.save(userCreateRequest.toEntityWithEncodedPassword(encodedPassword, country));
         return DtoFactory.createUserResponseDto(user);
     }
 
