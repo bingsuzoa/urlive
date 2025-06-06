@@ -59,6 +59,7 @@ public class UrliveFacade {
         return userService.getUserUrlResponses(id);
     }
 
+    @Transactional
     public String decodeShortUrl(String shortUrl) {
         return urlService.decodeShortUrl(shortUrl);
     }

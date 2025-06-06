@@ -35,23 +35,25 @@ public class UrlService {
     private final ViewRepository viewRepository;
     private final ShortUrlGenerator shortUrlGenerator;
 
+
     @Transactional
     public String decodeShortUrl(String shortUrl) {
         Optional<Url> optionalUrl = urlRepository.findUrlByShortUrl(shortUrl);
         if (optionalUrl.isEmpty()) {
             throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
         }
-        recordView(optionalUrl.get());
         return recordView(optionalUrl.get()).getOriginalUrl();
     }
 
+    @Transactional
     private Url recordView(Url url) {
         if (urlRepository.increaseViewCount(url.getId()) == 0) {
             throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
         }
-        Url updatedUrl = urlRepository.findById(url.getId()).get();
-        url.saveView(viewRepository.save(new View(updatedUrl)));
-        return updatedUrl;
+        Url urlWithoutViews = urlRepository.findById(url.getId()).get();
+        Url urlWithViews = urlRepository.findUrlWithViews(url.getId()).get();
+        urlWithViews.addView(viewRepository.save(new View(urlWithoutViews)));
+        return urlWithoutViews;
     }
 
     @Transactional
