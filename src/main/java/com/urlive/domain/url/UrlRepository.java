@@ -18,4 +18,7 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
     @Modifying(clearAutomatically = true)
     @Query("update Url u set u.viewCount = u.viewCount + 1 where u.id = :id")
     int increaseViewCount(@Param("id") Long id);
+
+    @Query("select u from Url u left join fetch u.views where u.id = :id")
+    Optional<Url> findUrlWithViews(@Param("id") Long id);
 }

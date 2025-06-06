@@ -3,10 +3,7 @@ package com.urlive.domain.url;
 import com.urlive.domain.BaseEntity;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.view.View;
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,7 +32,7 @@ public class Url extends BaseEntity {
     @Column(columnDefinition = "int default 0")
     private Long viewCount = 0L;
 
-    @OneToMany(mappedBy = "url")
+    @OneToMany(mappedBy = "url", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<View> views = new ArrayList<>();
 
     @OneToMany(mappedBy = "url")
@@ -55,7 +52,7 @@ public class Url extends BaseEntity {
         return views;
     }
 
-    public void saveView(View view) {
+    public void addView(View view) {
         views.add(view);
     }
 

@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
-@Profile("!test")
 public class UrliveApplication {
 
 	public static void main(String[] args) {
