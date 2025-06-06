@@ -3,7 +3,6 @@ package com.urlive.service;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
 import com.urlive.domain.url.shortUrlGenerator.ShortUrlGenerator;
-import com.urlive.domain.view.ViewRepository;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -23,10 +22,9 @@ import static org.mockito.Mockito.when;
 public class UrlServiceTest {
 
     UrlRepository urlRepository = mock(UrlRepository.class);
-    ViewRepository viewRepository = mock(ViewRepository.class);
     ShortUrlGenerator shortUrlGenerator = mock(ShortUrlGenerator.class);
 
-    UrlService urlService = new UrlService(urlRepository, viewRepository, shortUrlGenerator);
+    UrlService urlService = new UrlService(urlRepository, shortUrlGenerator);
 
     private static final String originalUrl = "http://urlive.com";
     private static final String shortUrl = "KD";
@@ -36,7 +34,6 @@ public class UrlServiceTest {
     void 단축_url_디코딩_테스트() {
         Url url = new Url(originalUrl, shortUrl);
         when(urlRepository.findUrlByShortUrl(any())).thenReturn(Optional.of(url));
-        when(urlRepository.increaseViewCount(any())).thenReturn(1);
         Assertions.assertThat(urlService.decodeShortUrl(shortUrl)).isEqualTo(originalUrl);
     }
 

@@ -1,8 +1,9 @@
 package com.urlive.web.dto.common;
 
-import com.urlive.domain.user.Country;
-import com.urlive.domain.user.Gender;
+
+import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.User;
+import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UserUrlResponse;

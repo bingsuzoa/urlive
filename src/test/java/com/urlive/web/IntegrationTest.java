@@ -2,10 +2,10 @@ package com.urlive.web;
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
-import com.urlive.domain.user.Country;
-import com.urlive.domain.user.Gender;
+import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
+import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.global.responseFormat.ApiResponse;
 import com.urlive.service.PasswordService;
@@ -72,7 +72,7 @@ public class IntegrationTest {
     private UrliveFacade urliveFacade;
 
     User setUp() {
-        User user = userRepository.save(new User("test", "01012345678", "password1111", 2025, Gender.MEN, Country.CHINA));
+        User user = userRepository.save(new User("test", "01012345678", "password1111", 2025, Gender.MEN,  new Country("KR", "대한민국")));
         userRepository.flush();
         return user;
     }
@@ -94,7 +94,7 @@ public class IntegrationTest {
                 "1234ffafeff",
                 2025,
                 1,
-                1
+                "KR"
         );
         String url = "http://localhost:" + port + "/user";
 
@@ -108,7 +108,7 @@ public class IntegrationTest {
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         List<User> users = userRepository.findAll();
         Assertions.assertThat(users.get(0).getGender()).isEqualTo(Gender.WOMEN);
-        Assertions.assertThat(users.get(0).getCountry()).isEqualTo(Country.AMERICA);
+        Assertions.assertThat(users.get(0).getCountry().getIsoCode()).isEqualTo("KR");
     }
 
     @Test

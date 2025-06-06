@@ -1,12 +1,11 @@
 package com.urlive.domain.user;
 
 import com.urlive.domain.BaseEntity;
+import com.urlive.domain.user.option.Gender;
+import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.user.passwordHistory.PasswordHistory;
 import com.urlive.domain.userUrl.UserUrl;
-import com.urlive.service.PasswordService;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import org.springframework.security.core.parameters.P;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -55,8 +54,8 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Gender gender;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
     @OneToMany(mappedBy = "user")

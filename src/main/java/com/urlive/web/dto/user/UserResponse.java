@@ -1,7 +1,7 @@
 package com.urlive.web.dto.user;
 
-import com.urlive.domain.user.Country;
-import com.urlive.domain.user.Gender;
+import com.urlive.domain.user.option.Gender;
+import com.urlive.domain.user.option.country.Country;
 
 public record UserResponse(
         Long id,

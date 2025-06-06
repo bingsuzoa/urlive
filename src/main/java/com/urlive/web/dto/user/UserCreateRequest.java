@@ -1,8 +1,8 @@
 package com.urlive.web.dto.user;
 
-import com.urlive.domain.user.Country;
-import com.urlive.domain.user.Gender;
 import com.urlive.domain.user.User;
+import com.urlive.domain.user.option.Gender;
+import com.urlive.domain.user.option.country.Country;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -28,15 +28,11 @@ public record UserCreateRequest(
         @NotNull(message = "성별 체크란이 비어있습니다.")
         Integer gender,
 
-        @NotNull(message = "국가 체크란이 비어있습니다.")
-        Integer country
+        @NotBlank(message = "국가 체크란이 비어있습니다.")
+        String isoCode
 ) {
 
-    public User toEntity() {
-        return new User(name, phoneNumber, password, age, Gender.getGender(gender), Country.getCountry(country));
-    }
-
-    public User toEntityWithEncodedPassword(String encodedPassword) {
-        return new User(name, phoneNumber, encodedPassword, age, Gender.getGender(gender), Country.getCountry(country));
+    public User toEntityWithEncodedPassword(String encodedPassword, Country country) {
+        return new User(name, phoneNumber, encodedPassword, age, Gender.getGender(gender), country);
     }
 }

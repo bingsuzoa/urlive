@@ -1,8 +1,8 @@
 package com.urlive.web;
 
 
-import com.urlive.domain.user.Country;
-import com.urlive.domain.user.Gender;
+import com.urlive.domain.user.option.Gender;
+import com.urlive.domain.user.option.country.Country;
 import com.urlive.global.responseFormat.ApiResponse;
 import com.urlive.global.responseFormat.ApiResponseBuilder;
 import com.urlive.service.UrliveFacade;
@@ -22,7 +22,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -47,12 +46,11 @@ public class UrliveControllerTest {
     private ApiResponseBuilder apiResponseBuilder;
 
 
-
     /// //////////////////////////해피 테스트
     @Test
     @DisplayName("회원가입 요청 확인")
     void 회원가입_요청() throws Exception {
-        UserResponse userResponse = new UserResponse(1L, "test", 20250604, Gender.WOMEN, Country.AMERICA);
+        UserResponse userResponse = new UserResponse(1L, "test", 20250604, Gender.WOMEN, new Country("KR", "대한민국"));
         when(urliveFacade.saveUser(any())).thenReturn(userResponse);
 
         when(apiResponseBuilder.created(any(), any()))
@@ -81,7 +79,7 @@ public class UrliveControllerTest {
     @Test
     @DisplayName("비밀번호 변경 확인")
     void 비밀번호_변경() throws Exception {
-        UserResponse userResponse = new UserResponse(1L, "test", 20250604, Gender.WOMEN, Country.AMERICA);
+        UserResponse userResponse = new UserResponse(1L, "test", 20250604, Gender.WOMEN, new Country("KR", "대한민국"));
         when(urliveFacade.changePassword(any(), any())).thenReturn(userResponse);
 
         when(apiResponseBuilder.ok(any(), any()))
@@ -197,7 +195,7 @@ public class UrliveControllerTest {
     @Test
     @DisplayName("비밀번호 변경 확인")
     void 비밀번호_예외() throws Exception {
-        UserResponse userResponse = new UserResponse(1L, "test", 20250604, Gender.WOMEN, Country.AMERICA);
+        UserResponse userResponse = new UserResponse(1L, "test", 20250604, Gender.WOMEN, new Country("KR", "대한민국"));
         when(urliveFacade.changePassword(any(), any())).thenReturn(userResponse);
 
         String request = """

@@ -3,10 +3,10 @@ package com.urlive.domain.userUrl;
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
-import com.urlive.domain.user.Country;
-import com.urlive.domain.user.Gender;
+import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
+import com.urlive.domain.user.option.country.Country;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.hibernate.Hibernate;
@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class UserUrlRepositoryTest {
     private EntityManager em;
 
     Long setUp() {
-        User user = userRepository.save(new User("test", "01012345678", "1234", 2025, Gender.MEN, Country.CHINA));
+        User user = userRepository.save(new User("test", "01012345678", "1234", 2025, Gender.MEN, new Country("KR", "대한민국")));
 
         Url url1 = new Url("http://test1.com", "test1ShortUrl");
         urlRepository.save(url1);
