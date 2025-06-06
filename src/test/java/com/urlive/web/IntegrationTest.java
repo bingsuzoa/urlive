@@ -6,12 +6,13 @@ import com.urlive.domain.user.Country;
 import com.urlive.domain.user.Gender;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
-import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.global.responseFormat.ApiResponse;
+import com.urlive.service.PasswordService;
 import com.urlive.service.UrliveFacade;
 import com.urlive.service.UserService;
 import com.urlive.web.dto.url.UrlCreateRequest;
+import com.urlive.web.dto.user.PasswordChangeRequest;
 import com.urlive.web.dto.user.UserCreateRequest;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UpdateTitleRequest;
@@ -32,6 +33,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -42,6 +44,7 @@ import static org.hamcrest.Matchers.startsWith;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Rollback(value = false)
 public class IntegrationTest {
 
     @LocalServerPort
@@ -63,10 +66,13 @@ public class IntegrationTest {
     private UserUrlRepository userUrlRepository;
 
     @Autowired
+    private PasswordService passwordService;
+
+    @Autowired
     private UrliveFacade urliveFacade;
 
     User setUp() {
-        User user = userRepository.save(new User("test", "01012345678", "1234", 2025, Gender.MEN, Country.CHINA));
+        User user = userRepository.save(new User("test", "01012345678", "password1111", 2025, Gender.MEN, Country.CHINA));
         userRepository.flush();
         return user;
     }
@@ -290,5 +296,21 @@ public class IntegrationTest {
         );
 
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("비밀번호 변경 실패 테스트")
+    void 비밀번호_변경_실패() {
+        User user = setUp();
+        Long id = user.getId();
+
+        String passwordHistory1 = "password2222";
+        String passwordHistory2 = "password3333";
+        userService.changePassword(id, new PasswordChangeRequest(passwordHistory1));
+        userService.changePassword(id, new PasswordChangeRequest(passwordHistory2));
+
+        org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            userService.changePassword(id, new PasswordChangeRequest(passwordHistory1));
+        });
     }
 }
