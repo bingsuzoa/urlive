@@ -21,6 +21,8 @@ public class Url extends BaseEntity {
     public Url(String originalUrl, String shortUrl) {
         this.originalUrl = originalUrl;
         this.shortUrl = shortUrl;
+        views = new ArrayList<>();
+        users = new HashSet<>();
     }
 
     @Column(unique = true, nullable = false)
