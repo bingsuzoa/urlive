@@ -51,7 +51,7 @@ public class UrlServiceTest {
     }
 
     @Test
-    @DisplayName("이미 저장된 단축 url이 있을 경우 예외 발생")
+    @DisplayName("이미 저장된 단축 url이 있을 경우 저장된 url 반환")
     void 저장된_단축_url_반환() {
         UrlCreateRequest request = new UrlCreateRequest(originalUrl);
         when(urlRepository.save(any())).thenThrow(new DataIntegrityViolationException("중복 에러"));

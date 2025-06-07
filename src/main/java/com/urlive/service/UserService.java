@@ -66,7 +66,7 @@ public class UserService {
         return userUrlRepository.findUserUrls(id);
     }
 
-    public boolean isExistingUrlOfUser(Long id, UrlCreateRequest urlCreateRequest) {
+    public boolean existsOriginalUrlForUser(Long id, UrlCreateRequest urlCreateRequest) {
         List<UserUrl> userUrls = getUserUrls(id);
         for (UserUrl url : userUrls) {
             if (url.getOriginalUrl().equals(urlCreateRequest.originalUrl())) {
@@ -78,6 +78,14 @@ public class UserService {
 
     public User getUserEntityWithoutUrls(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
+        }
+        return optionalUser.get();
+    }
+
+    public User getUserEntityWithUrls(Long id) {
+        Optional<User> optionalUser = userRepository.findUserWithUrlsById(id);
         if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
         }

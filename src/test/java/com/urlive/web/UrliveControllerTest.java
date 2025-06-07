@@ -103,7 +103,7 @@ public class UrliveControllerTest {
     @Test
     @DisplayName("단축 URL 생성하기")
     void 단축_URL_생성() throws Exception {
-        UserUrlResponse userUrlResponse = new UserUrlResponse("originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
+        UserUrlResponse userUrlResponse = new UserUrlResponse(1L, "originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
         when(urliveFacade.createShortUrl(any(), any())).thenReturn(userUrlResponse);
 
         when(apiResponseBuilder.ok(any(), any()))
@@ -127,7 +127,7 @@ public class UrliveControllerTest {
     @Test
     @DisplayName("사용자 urls 목록 가져오기")
     void URL_목록_가져오기() throws Exception {
-        UserUrlResponse userUrlResponse = new UserUrlResponse("originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
+        UserUrlResponse userUrlResponse = new UserUrlResponse(1L, "originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
         List<UserUrlResponse> userUrls = List.of(userUrlResponse);
         when(urliveFacade.getUrlsByUser(any())).thenReturn(userUrls);
 
@@ -154,7 +154,7 @@ public class UrliveControllerTest {
     @Test
     @DisplayName("단축 URL title 변경하기")
     void 단축_URL_타이틀_변경() throws Exception {
-        UserUrlResponse userUrlResponse = new UserUrlResponse("originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
+        UserUrlResponse userUrlResponse = new UserUrlResponse(1L, "originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
         when(urliveFacade.updateTitle(any(), any())).thenReturn(userUrlResponse);
 
         when(apiResponseBuilder.ok(any(), any()))
@@ -178,7 +178,7 @@ public class UrliveControllerTest {
     @Test
     @DisplayName("단축 URL 삭제하기")
     void 단축_URL_삭제() throws Exception {
-        UserUrlResponse userUrlResponse = new UserUrlResponse("originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
+        UserUrlResponse userUrlResponse = new UserUrlResponse(1L, "originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
         when(urliveFacade.deleteUserUrl(any())).thenReturn(userUrlResponse);
 
         when(apiResponseBuilder.ok(any(), any()))
@@ -211,7 +211,7 @@ public class UrliveControllerTest {
     @Test
     @DisplayName("단축 URL 예외")
     void 단축_URL_예외() throws Exception {
-        UserUrlResponse userUrlResponse = new UserUrlResponse("originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
+        UserUrlResponse userUrlResponse = new UserUrlResponse(1L, "originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
         when(urliveFacade.createShortUrl(any(), any())).thenReturn(userUrlResponse);
 
         String request = """
@@ -227,7 +227,7 @@ public class UrliveControllerTest {
     @Test
     @DisplayName("단축 URL title 변경시 blank면 예외 발생")
     void 단축_URL_타이틀_변경시_예외() throws Exception {
-        UserUrlResponse userUrlResponse = new UserUrlResponse("originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
+        UserUrlResponse userUrlResponse = new UserUrlResponse(1L, "originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);
         when(urliveFacade.updateTitle(any(), any())).thenReturn(userUrlResponse);
 
         String request = """

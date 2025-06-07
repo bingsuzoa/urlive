@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CountryService {
 
-
     public CountryService(CountryRepository countryRepository) {
         this.countryRepository = countryRepository;
     }

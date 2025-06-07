@@ -13,6 +13,7 @@ public class UserUrlResponseTest {
     @DisplayName("UserUrlResponse 생성 테스트")
     void UserUrlResponse_생성_테스트() {
         UserUrlResponse response = new UserUrlResponse(
+                1L,
                 "https://example.com",
                 "abc123",
                 "title",

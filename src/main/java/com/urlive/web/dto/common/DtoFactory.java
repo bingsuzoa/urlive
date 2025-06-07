@@ -27,23 +27,25 @@ public class DtoFactory {
         List<UserUrlResponse> userUrlsResponse = new ArrayList<>();
 
         for (UserUrl userUrl : userUrls) {
+            Long id = userUrl.getId();
             String originalUrl = userUrl.getOriginalUrl();
             String shortUrl = userUrl.getShortUrl();
             String title = userUrl.getTitle();
             LocalDateTime createdAt = userUrl.getCreateTime();
             Long viewCount = userUrl.getViewCount();
 
-            userUrlsResponse.add(new UserUrlResponse(originalUrl, shortUrl, title, createdAt, viewCount));
+            userUrlsResponse.add(new UserUrlResponse(id, originalUrl, shortUrl, title, createdAt, viewCount));
         }
         return userUrlsResponse;
     }
 
     public static UserUrlResponse getUserUrlDto(UserUrl userUrl) {
+        Long id = userUrl.getId();
         String originalUrl = userUrl.getOriginalUrl();
         String shortUrl = userUrl.getShortUrl();
         String title = userUrl.getTitle();
         LocalDateTime createdAt = userUrl.getCreateTime();
         Long viewCount = userUrl.getViewCount();
-        return new UserUrlResponse(originalUrl, shortUrl, title, createdAt, viewCount);
+        return new UserUrlResponse(id, originalUrl, shortUrl, title, createdAt, viewCount);
     }
 }

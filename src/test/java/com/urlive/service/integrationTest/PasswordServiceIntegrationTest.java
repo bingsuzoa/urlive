@@ -1,40 +1,44 @@
-package com.urlive.service;
+package com.urlive.service.integrationTest;
 
 import com.urlive.domain.user.User;
+import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.option.country.Country;
+import com.urlive.domain.user.option.country.CountryRepository;
 import com.urlive.domain.user.passwordHistory.PasswordHistory;
 import com.urlive.domain.user.passwordHistory.PasswordHistoryRepository;
+import com.urlive.service.CountryService;
+import com.urlive.service.PasswordService;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMockMvc(addFilters = false)
+public class PasswordServiceIntegrationTest {
 
-@ExtendWith(MockitoExtension.class)
-public class PasswordServiceTest {
-
-    @Mock
-    private PasswordHistoryRepository passwordHistoryRepository;
-
+    @Autowired
     private PasswordService passwordService;
 
-    @BeforeEach
-    void setUp() {
-        passwordService = new PasswordService(
-                new BCryptPasswordEncoder(),
-                passwordHistoryRepository
-        );
-    }
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CountryRepository countryRepository;
+
+    @Autowired
+    private PasswordHistoryRepository passwordHistoryRepository;
 
     /// ////해피 테스트
     @Test
@@ -56,12 +60,11 @@ public class PasswordServiceTest {
     @DisplayName("최근 변경했던 비밀번호들 중 변경하려는 비밀번호와 일치하는지 확인하는 테스트")
     void 기존_비밀번호_확인() {
         String rawPassword = "test124";
-        String existingPassword = passwordService.encode("test123");
+        String encodedPassword = passwordService.encode("test123");
+        Country country = countryRepository.findByIsoCode("KR").get();
 
-        User user = new User("test", "01012345678", existingPassword, 20250604, Gender.WOMEN, new Country("KR", "대한민국"));
-        List<PasswordHistory> histories = List.of(new PasswordHistory(user, existingPassword));
-        when(passwordHistoryRepository.findRecentHistories(any(), any())).thenReturn(histories);
-
+        User user = userRepository.save(new User("test", "01012345678", encodedPassword, 20250604, Gender.WOMEN, country));
+        passwordHistoryRepository.save(new PasswordHistory(user, encodedPassword));
         Assertions.assertThat(passwordService.changePassword(1L, rawPassword)).isNotNull();
     }
 
@@ -79,13 +82,15 @@ public class PasswordServiceTest {
     void 기존_비밀번호_존재() {
         String rawPassword = "test123";
         String existingPassword = passwordService.encode("test123");
+        Country country = countryRepository.findByIsoCode("KR").get();
 
-        User user = new User("test", "01012345678", existingPassword, 20250604, Gender.WOMEN, new Country("KR", "대한민국"));
+        User user = userRepository.save(new User("test", "01012345678", existingPassword, 20250604, Gender.WOMEN, country));
         List<PasswordHistory> histories = List.of(new PasswordHistory(user, existingPassword));
-        when(passwordHistoryRepository.findRecentHistories(any(), any())).thenReturn(histories);
+        passwordHistoryRepository.saveAll(histories);
 
         org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> {
             passwordService.changePassword(1L, rawPassword);
         });
     }
+
 }
