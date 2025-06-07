@@ -52,9 +52,10 @@ public class UrlService {
         String originalUrl = normalize(urlCreateRequest.originalUrl());
         try {
             String shortUrl = shortUrlGenerator.generateShortUrl();
-            return urlRepository.save(new Url(originalUrl, shortUrl));
+            urlRepository.save(new Url(originalUrl, shortUrl));
+            return urlRepository.findUrlWithUsersByOriginalUrl(originalUrl).get();
         } catch (DataIntegrityViolationException e) {
-            return urlRepository.findUrlByOriginalUrl(originalUrl).get();
+            return urlRepository.findUrlWithUsersByOriginalUrl(originalUrl).get();
         }
     }
 

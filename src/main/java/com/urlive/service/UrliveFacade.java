@@ -48,8 +48,8 @@ public class UrliveFacade {
     @Transactional
     public UserUrlResponse createShortUrl(Long id, UrlCreateRequest urlCreateRequest) {
         Url url = urlService.findOrCreateShortUrl(urlCreateRequest);
-        User user = userService.getUserEntityWithoutUrls(id);
-        if (userService.isExistingUrlOfUser(id, urlCreateRequest)) {
+        User user = userService.getUserEntityWithUrls(id);
+        if (userService.existsOriginalUrlForUser(id, urlCreateRequest)) {
             return DtoFactory.getUserUrlDto(userUrlService.getUserUrl(user, url));
         }
         return DtoFactory.getUserUrlDto(userUrlService.saveUserUrl(user, url));
