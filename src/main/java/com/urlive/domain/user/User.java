@@ -32,6 +32,7 @@ public class User extends BaseEntity {
         this.age = age;
         this.gender = gender;
         this.country = country;
+        this.urls = new HashSet<>();
         PasswordHistory passwordHistory = new PasswordHistory(this, password);
         passwordHistories.add(passwordHistory);
     }
