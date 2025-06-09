@@ -23,8 +23,9 @@ public class UrlServiceTest {
 
     UrlRepository urlRepository = mock(UrlRepository.class);
     ShortUrlGenerator shortUrlGenerator = mock(ShortUrlGenerator.class);
+    ViewService viewService = mock(ViewService.class);
 
-    UrlService urlService = new UrlService(urlRepository, shortUrlGenerator);
+    UrlService urlService = new UrlService(urlRepository, viewService, shortUrlGenerator);
 
     private static final String originalUrl = "http://urlive.com";
     private static final String shortUrl = "KD";
