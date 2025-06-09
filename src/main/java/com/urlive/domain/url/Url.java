@@ -31,11 +31,8 @@ public class Url extends BaseEntity {
     @Column(unique = true)
     private String shortUrl;
 
-    @Column(columnDefinition = "int default 0")
+    @Column(columnDefinition = "bigint default 0")
     private Long viewCount = 0L;
-
-    @Version
-    private Long version;
 
     @OneToMany(mappedBy = "url", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<View> views = new ArrayList<>();
@@ -56,6 +53,10 @@ public class Url extends BaseEntity {
     public void increaseViewCount() {
         viewCount++;
         views.add(new View(this));
+    }
+
+    public void updateViewCount(Long viewCount) {
+        this.viewCount = viewCount;
     }
 
     public List<View> getViews() {

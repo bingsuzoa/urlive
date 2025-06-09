@@ -56,7 +56,8 @@ public class UrliveFacade {
     }
 
     public List<UserUrlResponse> getUrlsByUser(Long id) {
-        return userService.getUserUrlResponses(id);
+        List<UserUrlResponse> urlsOfUser = userService.getUserUrlResponses(id);
+        return urlsOfUser;
     }
 
     @Transactional

@@ -44,7 +44,6 @@ import static org.hamcrest.Matchers.startsWith;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Rollback(value = false)
 public class IntegrationTest {
 
     @LocalServerPort
