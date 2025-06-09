@@ -1,8 +1,9 @@
-package com.urlive.service;
+package com.urlive.service.integrationTest;
+
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
-import com.urlive.domain.url.shortUrlGenerator.ShortUrlGenerator;
+import com.urlive.service.ViewService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -27,19 +27,16 @@ import java.util.concurrent.Executors;
 @ActiveProfiles("test")
 @SpringBootTest
 @Testcontainers
-public class UrliveServiceConcurrencyTest {
-
-    @Autowired
-    private UrlService urlService;
-
-    @Autowired
-    private UrlRepository urlRepository;
-
-    @Autowired
-    private ShortUrlGenerator shortUrlGenerator;
+public class ViewServiceIntegrationTest {
 
     @Autowired
     private ViewService viewService;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private UrlRepository urlRepository;
 
     @Container
     static GenericContainer<?> redisContainer = new GenericContainer<>("redis:7.2")
@@ -51,19 +48,12 @@ public class UrliveServiceConcurrencyTest {
         registry.add("spring.redis.port", () -> redisContainer.getMappedPort(6379));
     }
 
-    @Autowired
-    private StringRedisTemplate redisTemplate;
-
     @BeforeEach
     void cleanRedis() {
-        Set<String> keys = redisTemplate.keys("viewCount:*");
+        Set<String> keys = redisTemplate.keys(ViewService.VIEW_COUNT_PREFIX + "*");
         if (keys != null && !keys.isEmpty()) {
             redisTemplate.delete(keys);
         }
-    }
-
-    Url setUp() {
-        return urlRepository.save(new Url("http://test.com", "shortUrl"));
     }
 
     @AfterEach
@@ -71,20 +61,16 @@ public class UrliveServiceConcurrencyTest {
         urlRepository.deleteAll();
     }
 
-    @Test
-    @DisplayName("1개의_스레드로_viewCount증가_확인")
-    void 한_개의_스레드로_viewCount증가_확인() {
-        Url url = setUp();
-        Long urlId = url.getId();
-        urlService.decodeShortUrl("shortUrl");
-        Assertions.assertThat(viewService.getViewCount(urlId)).isEqualTo(1);
-
+    Url getUrl() {
+        return urlRepository.save(new Url("http://test.com", "shortUrl"));
     }
 
     @Test
-    @DisplayName("여러 스레드가 동시에 decodeUrl()요청 시에도 viewCount가 정확히 카운트되는지 확인")
-    void 카운트_증가_확인() throws InterruptedException {
-        setUp();
+    @DisplayName("여러 스레드가 동시 요청 시에도 viewCount 제대로 카운트 되는지 확인")
+    void viewCount_확인() throws InterruptedException {
+        Url url = getUrl();
+        Long urlId = url.getId();
+
         int threadCount = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(threadCount);
@@ -92,14 +78,39 @@ public class UrliveServiceConcurrencyTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    urlService.decodeShortUrl("shortUrl");
+                    viewService.incrementViewCount(urlId);
                 } finally {
                     latch.countDown();
                 }
             });
         }
         latch.await();
-        Url url = urlRepository.findUrlByShortUrl("shortUrl").get();
-        Assertions.assertThat(viewService.getViewCount(url.getId())).isEqualTo(threadCount);
+        Url updatedUrl = urlRepository.findById(urlId).get();
+        Assertions.assertThat(viewService.getViewCount(updatedUrl.getId())).isEqualTo(100);
+    }
+
+    @Test
+    @DisplayName("메모리에 저장된 viewCount db저장 확인 테스트")
+    void viewCount_db_저장() throws InterruptedException {
+        Url url = getUrl();
+        Long urlId = url.getId();
+
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    viewService.incrementViewCount(urlId);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+        viewService.flushViewCountToDB();
+        Url updatedUrl = urlRepository.findById(urlId).get();
+        Assertions.assertThat(updatedUrl.getViewCount()).isEqualTo(100);
     }
 }
