@@ -37,16 +37,16 @@ public class ViewService {
     public void flushViewCountToDB() {
         Set<String> keys = redisTemplate.keys(VIEW_COUNT_PREFIX + "*");
 
-        if(keys == null || keys.isEmpty()) {
+        if (keys == null || keys.isEmpty()) {
             return;
         }
 
-        for(String key : keys) {
+        for (String key : keys) {
             String urlIdStr = key.replace(VIEW_COUNT_PREFIX, "");
             Long urlID = Long.valueOf(urlIdStr);
 
             String value = redisTemplate.opsForValue().get(key);
-            if(value == null) {
+            if (value == null) {
                 continue;
             }
             Long viewCount = Long.valueOf(value);
