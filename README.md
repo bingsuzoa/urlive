@@ -21,27 +21,31 @@
 🔆 회원가입을 처리한다.<br/>
 🔆 입력값이 유효하지 않을 경우 예외를 발생시킨다.<br/>
 
-#### *<span style = 'color : #A8F552'>@PostMapping("/user-url/{id}")</span>*<br/>
+#### *<span style = 'color : #A8F552'>@PatchMapping("/user/{id}")</span>*<br/>
+
+🔆 사용자의 비밀번호를 변경한다.<br/>
+
+#### *<span style = 'color : #A8F552'>@PostMapping("/users/{userId}/urls")</span>*<br/>
 
 🔆 사용자가 요청한 OriginalUrl로 단축 URL을 생성한다.<br/>
 🔆 동일한 Original URL이 이미 존재할 경우, 기존 단축 URL을 반환한다.<br/>
 🔆 입력값이 유효하지 않을 경우 예외를 발생시킨다.<br/>
 
-#### *<span style = 'color : #A8F552'> @GetMapping("/user-url/{id}")</span>*<br/>
+#### *<span style = 'color : #A8F552'>@GetMapping("/users/{userId}/urls")</span>*<br/>
 
 🔆 역할 : 사용자의 단축 URL 목록을 조회한다.<br/>
 
-#### *<span style = 'color : #A8F552'>@GetMapping("/url/{short-url}")</span>*<br/>
+#### *<span style = 'color : #A8F552'>@GetMapping("/{short-url}")</span>*<br/>
 
-🔆 단축 URL(shortUrl)로 요청 시 원본 URL(originalUrl)을 반환한다.<br/>
+🔆 단축 URL(shortUrl)로 요청 시 원본 URL(originalUrl)로 리다이렉트한다.<br/>
 🔆 존재하지 않는 경우 예외를 발생시킨다.<br/>
 
-#### *<span style = 'color : #A8F552'>@PatchMapping("user-url/{id}")</span>*<br/>
+#### *<span style = 'color : #A8F552'>@PatchMapping("/user-urls/{userUrlId}")</span>*<br/>
 
 🔆 사용자가 단축 URL의 제목(title)을 수정한다.<br/>
 🔆 입력값이 없을 경우 예외를 발생시킨다.<br/>
 
-#### *<span style = 'color : #A8F552'>@DeleteMapping("user-url/{id}")</span>*<br/>
+#### *<span style = 'color : #A8F552'>@DeleteMapping("/user-urls/{userUrlId}")</span>*<br/>
 
 🔆 사용자의 단축 URL을 삭제한다.<br/>
 

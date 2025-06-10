@@ -1,6 +1,7 @@
 package com.urlive.domain.user.option.country;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +35,7 @@ public class InitCountryRunner implements CommandLineRunner {
         countryRepository.saveAll(countries);
     }
 
+    @Async
     @Scheduled(cron = "0 0 3 ? * MON")
     public void updateCountriesWeekly() {
         List<CountryResponse> countryResponses = countryFetcher.fetchCountries();
