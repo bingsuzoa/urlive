@@ -10,7 +10,10 @@ import com.urlive.web.dto.user.UserCreateRequest;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,7 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UrliveController {
@@ -34,6 +39,7 @@ public class UrliveController {
 
     private final UrliveFacade urliveFacade;
     private final ApiResponseBuilder apiResponseBuilder;
+    private static final Logger logger = LoggerFactory.getLogger(UrliveController.class);
 
     @PostMapping("/user")
     public ResponseEntity<ApiResponse<UserResponse>> join(@RequestBody @Valid UserCreateRequest userCreateRequest) {
@@ -58,11 +64,24 @@ public class UrliveController {
     }
 
     @GetMapping("/{short-url}")
-    public ResponseEntity<ApiResponse<Void>> redirectToOriginalUrl(@PathVariable(name = "short-url") String shortUrl) {
+    public ResponseEntity<ApiResponse<Void>> redirectToOriginalUrl(
+            @PathVariable(name = "short-url") String shortUrl,
+            HttpServletRequest request
+    ) {
         String originalUrl = urliveFacade.decodeShortUrl(shortUrl);
+
+        logger.info("{}", Map.of(
+                "event", "redirect",
+                "shortUrl", shortUrl,
+                "referer", request.getHeader("Referer"),
+                "ip", request.getRemoteAddr(),
+                "ua", request.getHeader("User-Agent"),
+                "@timestamp", Instant.now().toString()
+        ));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(originalUrl));
+
         return ResponseEntity.status(HttpStatus.FOUND)
                 .headers(headers)
                 .build();

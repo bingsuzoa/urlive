@@ -33,6 +33,7 @@ dependencies {
 	testImplementation 'org.testcontainers:junit-jupiter:1.19.7'
 	implementation 'org.springframework.retry:spring-retry'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
 }
 
 tasks.named('test') {
