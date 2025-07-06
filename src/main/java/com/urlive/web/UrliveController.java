@@ -1,5 +1,7 @@
 package com.urlive.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.urlive.global.responseFormat.ApiResponse;
 import com.urlive.global.responseFormat.ApiResponseBuilder;
 import com.urlive.global.responseFormat.ResponseMessage;
@@ -22,8 +24,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 public class UrliveController {
@@ -67,17 +71,17 @@ public class UrliveController {
     public ResponseEntity<ApiResponse<Void>> redirectToOriginalUrl(
             @PathVariable(name = "short-url") String shortUrl,
             HttpServletRequest request
-    ) {
+    ) throws JsonProcessingException {
         String originalUrl = urliveFacade.decodeShortUrl(shortUrl);
 
-        logger.info("{}", Map.of(
-                "event", "redirect",
-                "shortUrl", shortUrl,
-                "referer", request.getHeader("Referer"),
-                "ip", request.getRemoteAddr(),
-                "ua", request.getHeader("User-Agent"),
-                "@timestamp", Instant.now().toString()
-        ));
+        Map<String, Object> logMap = new LinkedHashMap<>();
+        logMap.put("event", "redirect");
+        logMap.put("shortUrl", shortUrl);
+        logMap.put("referer", request.getHeader("Referer"));
+        logMap.put("ip", request.getRemoteAddr());
+        logMap.put("ua", request.getHeader("User-Agent"));
+
+        logger.info(new ObjectMapper().writeValueAsString(logMap));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(originalUrl));

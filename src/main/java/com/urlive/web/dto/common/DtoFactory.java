@@ -6,6 +6,7 @@ import com.urlive.domain.user.User;
 import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.web.dto.user.UserResponse;
+import com.urlive.web.dto.user.country.CountryDto;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
 
 import java.time.LocalDateTime;
@@ -19,8 +20,8 @@ public class DtoFactory {
         String name = user.getName();
         int age = user.getAge();
         Gender gender = user.getGender();
-        Country country = user.getCountry();
-        return new UserResponse(id, name, age, gender, country);
+        CountryDto countryDto = DtoFactory.getCountryDto(user.getCountry());
+        return new UserResponse(id, name, age, gender,countryDto);
     }
 
     public static List<UserUrlResponse> getBoardDto(List<UserUrl> userUrls) {
@@ -47,5 +48,9 @@ public class DtoFactory {
         LocalDateTime createdAt = userUrl.getCreateTime();
         Long viewCount = userUrl.getViewCount();
         return new UserUrlResponse(id, originalUrl, shortUrl, title, createdAt, viewCount);
+    }
+
+    public static CountryDto getCountryDto(Country country) {
+        return new CountryDto(country.getId(), country.getIsoCode(), country.getName());
     }
 }

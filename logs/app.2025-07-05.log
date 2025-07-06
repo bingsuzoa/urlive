@@ -1,0 +1,7 @@
+hello filebeat
+{"event": "redirect", "shortUrl": "abc123", "ip": "123.123.123.123", "referer": "https://naver.com", "ua": "Mozilla/5.0", "@timestamp": "2025-07-05T14:00:00Z"}
+{"@timestamp":"2025-07-05T15:00:00Z","event":"redirect","shortUrl":"abc123","ip":"192.168.0.1","referer":"https://example.com","ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"}
+{"@timestamp":"2025-07-05T15:00:00Z","event":"redirect","shortUrl":"abc123","ip":"192.168.0.1","referer":"https://example.com","ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"}
+{"@timestamp":"2025-07-05T15:22:00Z","event":"redirect","shortUrl":"xyz789","ip":"9.8.7.6","referer":"https://naver.com","ua":"MyBrowser"}
+{"event":"redirect","데이터들어왔나??":"xyz789","referer":"https://example.com","ip":"123.123.123.123","ua":"Mozilla/5.0","@timestamp":"2025-07-05T14:58:00.000Z"}
+{"@timestamp":"2025-07-06T12:00:00.000Z","shortUrl":"저장확인!","ip":"192.168.0.1","referer":"https://google.com","ua":"Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X)","event":"redirect"}
