@@ -2,6 +2,7 @@ package com.urlive.global.responseFormat;
 
 public enum ResponseMessage {
     USER_CREATE_SUCCESS("사용자 DB 저장 완료"),
+    USER_LOGIN_SUCCESS("사용자 로그인 성공"),
     SHORT_URL_CREATE_SUCCESS("단축 URL 생성 완료"),
     URL_TITLE_UPDATE_SUCCESS("사용자 URL 타이틀 변경 완료"),
     USER_URL_DELETE_SUCCESS("사용자 URL 삭제 완료"),

@@ -9,6 +9,7 @@ import com.urlive.service.UrliveFacade;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import com.urlive.web.dto.user.PasswordChangeRequest;
 import com.urlive.web.dto.user.UserCreateRequest;
+import com.urlive.web.dto.user.UserLoginRequest;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
@@ -48,6 +49,11 @@ public class UrliveController {
     @PostMapping("/user")
     public ResponseEntity<ApiResponse<UserResponse>> join(@RequestBody @Valid UserCreateRequest userCreateRequest) {
         return apiResponseBuilder.created(ResponseMessage.USER_CREATE_SUCCESS, urliveFacade.saveUser(userCreateRequest));
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<ApiResponse<UserResponse>> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+        return apiResponseBuilder.ok(ResponseMessage.USER_LOGIN_SUCCESS, urliveFacade.loginUser(userLoginRequest));
     }
 
     @PatchMapping("/user/{id}")

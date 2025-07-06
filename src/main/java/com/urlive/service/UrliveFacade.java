@@ -6,6 +6,7 @@ import com.urlive.web.dto.common.DtoFactory;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import com.urlive.web.dto.user.PasswordChangeRequest;
 import com.urlive.web.dto.user.UserCreateRequest;
+import com.urlive.web.dto.user.UserLoginRequest;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
@@ -39,6 +40,10 @@ public class UrliveFacade {
 
     public UserResponse saveUser(UserCreateRequest userCreateRequest) {
         return userService.saveUser(userCreateRequest);
+    }
+
+    public UserResponse loginUser(UserLoginRequest userLoginRequest) {
+        return userService.loginUser(userLoginRequest);
     }
 
     public UserResponse changePassword(Long id, PasswordChangeRequest passwordChangeRequest) {

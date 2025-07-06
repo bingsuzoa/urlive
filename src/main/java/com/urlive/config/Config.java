@@ -10,8 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.http.HttpRequest;
-
 @Configuration
 @EnableRetry
 public class Config {

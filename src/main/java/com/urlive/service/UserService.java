@@ -10,6 +10,7 @@ import com.urlive.web.dto.common.DtoFactory;
 import com.urlive.web.dto.url.UrlCreateRequest;
 import com.urlive.web.dto.user.PasswordChangeRequest;
 import com.urlive.web.dto.user.UserCreateRequest;
+import com.urlive.web.dto.user.UserLoginRequest;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,19 @@ public class UserService {
         String encodedPassword = passwordService.encode(userCreateRequest.password());
         Country country = countryService.findByIsoCode(userCreateRequest.isoCode());
         User user = userRepository.save(userCreateRequest.toEntityWithEncodedPassword(encodedPassword, country));
+        return DtoFactory.createUserResponseDto(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse loginUser(UserLoginRequest userLoginRequest) {
+        Optional<User> optionalUser = userRepository.findUserByPhoneNumber(userLoginRequest.phoneNumbr());
+        if(optionalUser.isEmpty()) {
+            throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
+        }
+        User user = optionalUser.get();
+        if(!passwordService.matches(userLoginRequest.password(), user.getPassword())) {
+            throw new IllegalArgumentException(User.NOT_MATCH_PASSWORD);
+        }
         return DtoFactory.createUserResponseDto(user);
     }
 
