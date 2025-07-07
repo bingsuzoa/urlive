@@ -56,7 +56,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Gender gender;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(unique = true, name = "country_id", nullable = false)
     private Country country;
 

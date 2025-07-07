@@ -1,8 +1,8 @@
 package com.urlive.web.dto.common;
 
 
-import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.User;
+import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.web.dto.user.UserResponse;
@@ -21,7 +21,7 @@ public class DtoFactory {
         int age = user.getAge();
         Gender gender = user.getGender();
         CountryDto countryDto = DtoFactory.getCountryDto(user.getCountry());
-        return new UserResponse(id, name, age, gender,countryDto);
+        return new UserResponse(id, name, age, gender, countryDto);
     }
 
     public static List<UserUrlResponse> getBoardDto(List<UserUrl> userUrls) {

@@ -31,7 +31,7 @@ public class Country {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "country")
+    @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
     private List<User> users = new ArrayList<>();
 
     public Long getId() {
