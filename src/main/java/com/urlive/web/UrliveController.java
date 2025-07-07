@@ -51,7 +51,7 @@ public class UrliveController {
         return apiResponseBuilder.created(ResponseMessage.USER_CREATE_SUCCESS, urliveFacade.saveUser(userCreateRequest));
     }
 
-    @GetMapping("/user")
+    @PostMapping("/user/login")
     public ResponseEntity<ApiResponse<UserResponse>> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
         return apiResponseBuilder.ok(ResponseMessage.USER_LOGIN_SUCCESS, urliveFacade.loginUser(userLoginRequest));
     }

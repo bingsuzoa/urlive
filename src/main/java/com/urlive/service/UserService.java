@@ -51,7 +51,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResponse loginUser(UserLoginRequest userLoginRequest) {
-        Optional<User> optionalUser = userRepository.findUserByPhoneNumber(userLoginRequest.phoneNumbr());
+        Optional<User> optionalUser = userRepository.findUserByPhoneNumber(userLoginRequest.phoneNumber());
         if(optionalUser.isEmpty()) {
             throw new IllegalArgumentException(User.NOT_EXIST_USER_ID);
         }
