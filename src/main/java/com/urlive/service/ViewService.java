@@ -2,25 +2,30 @@ package com.urlive.service;
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Set;
 
 @Service
 public class ViewService {
 
     public ViewService(StringRedisTemplate redisTemplate,
-                       UrlRepository urlRepository
+                       UrlRepository urlRepository,
+                       Environment env
     ) {
         this.redisTemplate = redisTemplate;
         this.urlRepository = urlRepository;
+        this.env = env;
     }
 
     public static final String VIEW_COUNT_PREFIX = "viewCount:";
     private final StringRedisTemplate redisTemplate;
     private final UrlRepository urlRepository;
+    private final Environment env;
 
     public void incrementViewCount(Long urlId) {
         String key = VIEW_COUNT_PREFIX + urlId;
@@ -35,6 +40,10 @@ public class ViewService {
 
     @Transactional
     public void flushViewCountToDB() {
+        if (isTestProfile()) {
+            return;
+        }
+
         Set<String> keys = redisTemplate.keys(VIEW_COUNT_PREFIX + "*");
 
         if (keys == null || keys.isEmpty()) {
@@ -56,5 +65,9 @@ public class ViewService {
 
             url.updateViewCount(viewCount);
         }
+    }
+
+    private boolean isTestProfile() {
+        return Arrays.asList(env.getActiveProfiles()).contains("test");
     }
 }

@@ -2,12 +2,13 @@ package com.urlive.web;
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
-import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
+import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.global.responseFormat.ApiResponse;
+import com.urlive.global.responseFormat.ApiResponseBuilder;
 import com.urlive.service.PasswordService;
 import com.urlive.service.UrliveFacade;
 import com.urlive.service.UserService;
@@ -33,7 +34,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -48,6 +48,12 @@ public class IntegrationTest {
 
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private UrliveFacade urliveFacade;
+
+    @Autowired
+    private ApiResponseBuilder apiResponseBuilder;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -67,23 +73,20 @@ public class IntegrationTest {
     @Autowired
     private PasswordService passwordService;
 
-    @Autowired
-    private UrliveFacade urliveFacade;
-
     User setUp() {
-        User user = userRepository.save(new User("test", "01012345678", "password1111", 2025, Gender.MEN,  new Country("KR", "대한민국")));
+        User user = userRepository.save(new User("test", "01012345678", "password1111", 20250312, Gender.MEN, new Country("KR", "대한민국")));
         userRepository.flush();
         return user;
     }
 
     @AfterEach
-    void init() {
+    void deleteAll() {
         userUrlRepository.deleteAll();
         userRepository.deleteAll();
         urlRepository.deleteAll();
     }
 
-    /// ///////해피 테스트
+    /// ////////////////해피 테스트
     @Test
     @DisplayName("회원가입 요청 성공 테스트")
     void 회원가입_요청_성공() {
