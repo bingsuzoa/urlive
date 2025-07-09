@@ -1,5 +1,8 @@
 package com.urlive.service.integrationTest;
 
+import com.urlive.config.AsyncSyncTestConfig;
+import com.urlive.config.TestRedisConfig;
+import com.urlive.domain.url.UrlRepository;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.userUrl.UserUrlRepository;
@@ -11,19 +14,20 @@ import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureMockMvc(addFilters = false)
+@Import({AsyncSyncTestConfig.class, TestRedisConfig.class})
 public class UrliveFacadeIntegrationTest {
 
     @Autowired
@@ -31,6 +35,12 @@ public class UrliveFacadeIntegrationTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UrlService urlService;
+
+    @Autowired
+    private UrlRepository urlRepository;
 
     @Autowired
     private UserUrlService userUrlService;
@@ -46,6 +56,13 @@ public class UrliveFacadeIntegrationTest {
 
     @Autowired
     private UserUrlRepository userUrlRepository;
+
+    @AfterEach
+    void deleteAll() {
+        userUrlRepository.deleteAll();
+        userRepository.deleteAll();
+        urlRepository.deleteAll();
+    }
 
 
     User getUser() {
@@ -129,10 +146,13 @@ public class UrliveFacadeIntegrationTest {
 
     @Test
     @DisplayName("최근에 변경했던 비밀번호 중 동일한 비밀번호로 변경 시도할 경우 실패")
-    void 변경_이력에있는_비밀번호_변경시도시_실패() {
+    void 변경_이력에있는_비밀번호_변경시도시_실패() throws InterruptedException {
         User user = getUser();
+        Thread.sleep(1000);
         urliveFacade.changePassword(user.getId(), new PasswordChangeRequest("test456"));
+        Thread.sleep(1000);
         urliveFacade.changePassword(user.getId(), new PasswordChangeRequest("test789"));
+        Thread.sleep(1000);
 
         org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> {
             urliveFacade.changePassword(user.getId(), new PasswordChangeRequest("test456"));
@@ -159,6 +179,19 @@ public class UrliveFacadeIntegrationTest {
         org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> {
             urliveFacade.deleteUserUrl(response.id());
         });
+    }
+
+    @Test
+    @DisplayName("사용자가 가지고 있는 URL 목록 가져오는 테스트")
+    void url_목록_가져오기() {
+        User user = getUser();
+        Long id = user.getId();
+
+        urliveFacade.createShortUrl(id, new UrlCreateRequest("http://test1.com"));
+        urliveFacade.createShortUrl(id, new UrlCreateRequest("http://test2.com"));
+        urliveFacade.createShortUrl(id, new UrlCreateRequest("http://test3.com"));
+
+        Assertions.assertThat(userService.getUserUrlResponses(id).size()).isEqualTo(3);
     }
 
 }

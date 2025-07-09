@@ -77,7 +77,7 @@ public class UserCreateRequestTest {
 
         assertFalse(violations.isEmpty());
         boolean isValidation = violations.stream()
-                .anyMatch(v -> v.getConstraintDescriptor().getAnnotation() instanceof Size);
+                .anyMatch(v -> v.getConstraintDescriptor().getAnnotation() instanceof Pattern);
         assertTrue(isValidation);
     }
 

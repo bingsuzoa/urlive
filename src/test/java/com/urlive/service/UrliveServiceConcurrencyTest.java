@@ -88,4 +88,31 @@ public class UrliveServiceConcurrencyTest {
         String viewCount = redisTemplate.opsForValue().get(redisKey);
         Assertions.assertThat(viewCount).isEqualTo("100");
     }
+
+    @Test
+    @DisplayName("Redis에 있는 데이터가 DB에 정확히 주입되는지 확인")
+    void DB_FLUSH_확인() throws InterruptedException {
+        Url url = setUp();
+        int threadCount = 30;
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        for(int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                try {
+                    urlService.decodeShortUrl(url.getShortUrl());
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+        String redisKey = "viewCount:" + url.getId();
+        String viewCount = redisTemplate.opsForValue().get(redisKey);
+        Assertions.assertThat(viewCount).isEqualTo("30");
+
+        viewService.flushViewCountToDB();
+        Url updatedUrl = urlRepository.findById(url.getId()).get();
+        Assertions.assertThat(updatedUrl.getViewCount()).isEqualTo(30);
+    }
 }

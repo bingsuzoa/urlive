@@ -57,7 +57,7 @@ public class User extends BaseEntity {
     private Gender gender;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(unique = true, name = "country_id", nullable = false)
+    @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
     @OneToMany(mappedBy = "user")

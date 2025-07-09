@@ -1,5 +1,7 @@
 package com.urlive.service.integrationTest;
 
+import com.urlive.config.AsyncSyncTestConfig;
+import com.urlive.config.TestRedisConfig;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
 import com.urlive.domain.url.shortUrlGenerator.ShortUrlGenerator;
@@ -8,6 +10,7 @@ import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.option.country.Country;
+import com.urlive.domain.user.option.country.CountryRepository;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.service.CountryService;
@@ -16,16 +19,18 @@ import com.urlive.web.dto.user.UserCreateRequest;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UpdateTitleRequest;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureMockMvc(addFilters = false)
+@Import({AsyncSyncTestConfig.class, TestRedisConfig.class})
 public class UserUrlIntegrationTest {
 
     @Autowired
@@ -44,12 +49,16 @@ public class UserUrlIntegrationTest {
     private CountryService countryService;
 
     @Autowired
+    private CountryRepository countryRepository;
+
+    @Autowired
     private ShortUrlGenerator shortUrlGenerator;
 
-    User getUser() {
-        Country country = countryService.findByIsoCode("KR");
-        User user = userRepository.save(new User("test", "01012345678", "test123", 20250604, Gender.WOMEN, country));
-        return user;
+    @AfterEach
+    void deleteAll() {
+        userUrlRepository.deleteAll();
+        userRepository.deleteAll();
+        urlRepository.deleteAll();
     }
 
     Url getUrl() {
@@ -60,7 +69,8 @@ public class UserUrlIntegrationTest {
     @Test
     @DisplayName("userUrl 저장 테스트")
     void 저장() {
-        User user = getUser();
+        Country country = countryService.findByIsoCode("KR");
+        User user = userRepository.save(new User("test", "01012345678", "test123", 20250604, Gender.WOMEN, country));
         Url url = getUrl();
         Assertions.assertThat(userUrlService.saveUserUrl(user, url)).isNotNull();
     }
@@ -68,7 +78,8 @@ public class UserUrlIntegrationTest {
     @Test
     @DisplayName("userUrl 조회 테스트")
     void userUrl_조회() {
-        User user = getUser();
+        Country country = countryService.findByIsoCode("KR");
+        User user = userRepository.save(new User("test", "01012345678", "test123", 20250604, Gender.WOMEN, country));
         Url url = getUrl();
         UserUrl userUrl = userUrlService.saveUserUrl(user, url);
         Assertions.assertThat(userUrl.getTitle()).isEmpty();;
@@ -78,7 +89,8 @@ public class UserUrlIntegrationTest {
     @Test
     @DisplayName("title 변경 테스트")
     void 타이틀_변경() {
-        User user = getUser();
+        Country country = countryService.findByIsoCode("KR");
+        User user = userRepository.save(new User("test", "01012345678", "test123", 20250604, Gender.WOMEN, country));
         Url url = getUrl();
         UserUrl userUrl = userUrlService.saveUserUrl(user, url);
         Assertions.assertThat(userUrlService.updateTitle(userUrl.getId(), new UpdateTitleRequest("newTitle")).title())
@@ -88,7 +100,8 @@ public class UserUrlIntegrationTest {
     @Test
     @DisplayName("user의 단축Url 삭제 테스트")
     void 단축Url_삭제() {
-        User user = getUser();
+        Country country = countryService.findByIsoCode("KR");
+        User user = userRepository.save(new User("test", "01012345678", "test123", 20250604, Gender.WOMEN, country));
         Url url = getUrl();
         UserUrl userUrl = userUrlService.saveUserUrl(user, url);
         Assertions.assertThat(userUrlService.deleteUserUrl(userUrl.getId())).isNotNull();
@@ -110,7 +123,8 @@ public class UserUrlIntegrationTest {
     @Test
     @DisplayName("user의 단축Url 삭제 실패 테스트")
     void 단축Url_삭제_실패() {
-        User user = getUser();
+        Country country = countryService.findByIsoCode("KR");
+        User user = userRepository.save(new User("test", "01012345678", "test123", 20250604, Gender.WOMEN, country));
         Url url = getUrl();
         UserUrl userUrl = userUrlService.saveUserUrl(user, url);
         userUrlService.deleteUserUrl(userUrl.getId());
