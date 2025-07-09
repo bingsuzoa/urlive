@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 public record UserLoginRequest(
         @NotBlank(message = "휴대폰 번호 작성은 필수입니다.")
-        @Size(max = 11, message = "휴대폰 번호는 '01012345678'과 같은 형식으로 작성해주세요.")
+        @Pattern(regexp = "^010\\d{8}$", message = "휴대폰 번호는 '01012345678'과 같은 형식으로 작성해주세요.")
         String phoneNumber,
 
         @NotBlank(message = "비밀번호 작성은 필수입니다.")

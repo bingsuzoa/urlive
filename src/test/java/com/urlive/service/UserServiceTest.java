@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testcontainers.shaded.org.checkerframework.checker.units.qual.C;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,9 @@ public class UserServiceTest {
     @Mock
     private PasswordService passwordService;
 
+    @Mock
+    private CountryService countryService;
+
     @InjectMocks
     private UserService userService;
 
@@ -45,9 +49,11 @@ public class UserServiceTest {
         UserCreateRequest userCreateRequest =
                 new UserCreateRequest("test", "01012345678", "test123", 20250604, 1, "KR");
         String encodedPassword = "encodedPassword";
-        when(passwordService.encode(any())).thenReturn(encodedPassword);
         User user = new User("test", "01012345678", encodedPassword, 20250604, Gender.WOMEN, new Country("KR", "대한민국"));
+        Country country = new Country("KR", "korea");
+        when(passwordService.encode(any())).thenReturn(encodedPassword);
         when(userRepository.save(any())).thenReturn(user);
+        when(countryService.findByIsoCode(any())).thenReturn(country);
 
         Assertions.assertThat(userService.saveUser(userCreateRequest)).isNotNull();
         Assertions.assertThat(userService.saveUser(userCreateRequest).gender()).isEqualTo(Gender.WOMEN);
