@@ -6,6 +6,7 @@ import com.urlive.global.responseFormat.ApiResponseBuilder;
 import com.urlive.global.responseFormat.ResponseMessage;
 import com.urlive.service.UrliveFacade;
 import com.urlive.web.dto.log.TrafficByDateRange;
+import com.urlive.web.dto.log.TrafficByReferer;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -51,7 +52,7 @@ public class LogController {
                 .build();
     }
 
-    @GetMapping("/user-url/{shortUrl}")
+    @GetMapping("/user-urls/{shortUrl}/traffic/date")
     public ResponseEntity<ApiResponse<List<TrafficByDateRange>>> getTrafficByDateRange(
             @PathVariable(name = "shortUrl") String shortUrl,
             @RequestParam("days") int days
@@ -60,5 +61,16 @@ public class LogController {
         LocalDateTime start = end.minusDays(days);
         return apiResponseBuilder.ok(ResponseMessage.LOG_TRAFFIC_DATE_RANGE_SUCCESS,
                 logService.getTrafficsByDateRange(start, end, shortUrl));
+    }
+
+    @GetMapping("/user-urls/{shortUrl}/referer")
+    public ResponseEntity<ApiResponse<List<TrafficByReferer>>> getRefererByDateRange(
+            @PathVariable(name = "shortUrl") String shortUrl,
+            @RequestParam("days") int days
+    ) {
+        LocalDateTime end = LocalDateTime.now();
+        LocalDateTime start = end.minusDays(days);
+        return apiResponseBuilder.ok(ResponseMessage.LOG_TRAFFIC_REFERER_SUCCESS,
+                logService.getTrafficsByReferer(start, end, shortUrl));
     }
 }

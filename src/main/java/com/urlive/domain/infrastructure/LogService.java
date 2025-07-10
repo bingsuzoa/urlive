@@ -3,6 +3,7 @@ package com.urlive.domain.infrastructure;
 
 import com.urlive.web.dto.log.LogDtoFactory;
 import com.urlive.web.dto.log.TrafficByDateRange;
+import com.urlive.web.dto.log.TrafficByReferer;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,4 +68,11 @@ public class LogService {
                                                            LocalDateTime end, String shortUrl) {
         return LogDtoFactory.getTrafficByDateRange(logRepository.findLogByDateRange(shortUrl, start, end));
     }
+
+    public List<TrafficByReferer> getTrafficsByReferer(LocalDateTime start,
+                                                       LocalDateTime end, String shortUrl) {
+        return LogDtoFactory.getTrafficsByReferer(logRepository.findLogByReferer(shortUrl, start, end));
+    }
+
+
 }

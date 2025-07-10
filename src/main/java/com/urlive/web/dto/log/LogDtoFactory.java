@@ -16,4 +16,16 @@ public class LogDtoFactory {
         }
         return trafficsByDateRange;
     }
+
+    public static List<TrafficByReferer> getTrafficsByReferer(List<Object[]> logs) {
+        List<TrafficByReferer> trafficsByReferer = new ArrayList<>();
+
+        for(Object[] log : logs) {
+            LocalDate date = (LocalDate) log[0];
+            String referer = (String) log[1];
+            int count = (int) log[2];
+            trafficsByReferer.add(new TrafficByReferer(date, referer, count));
+        }
+        return trafficsByReferer;
+    }
 }
