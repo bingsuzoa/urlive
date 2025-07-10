@@ -1,5 +1,7 @@
 package com.urlive.service;
 
+import com.urlive.domain.infrastructure.Log;
+import com.urlive.domain.infrastructure.LogService;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.user.User;
 import com.urlive.web.dto.common.DtoFactory;
@@ -10,6 +12,7 @@ import com.urlive.web.dto.user.UserLoginRequest;
 import com.urlive.web.dto.user.UserResponse;
 import com.urlive.web.dto.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,16 +30,19 @@ public class UrliveFacade {
     private UrliveFacade(
             UserService userService,
             UrlService urlService,
-            UserUrlService userUrlService
+            UserUrlService userUrlService,
+            LogService logService
     ) {
         this.userService = userService;
         this.urlService = urlService;
         this.userUrlService = userUrlService;
+        this.logService = logService;
     }
 
     private UserService userService;
     private UrlService urlService;
     private UserUrlService userUrlService;
+    private LogService logService;
 
     public UserResponse saveUser(UserCreateRequest userCreateRequest) {
         return userService.saveUser(userCreateRequest);
@@ -76,5 +82,9 @@ public class UrliveFacade {
 
     public UserUrlResponse deleteUserUrl(Long id) {
         return userUrlService.deleteUserUrl(id);
+    }
+
+    public Log createLog(HttpServletRequest request, String shortUrl) {
+        return logService.createLog(request, shortUrl);
     }
 }

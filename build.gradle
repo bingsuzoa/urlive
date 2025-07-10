@@ -34,6 +34,7 @@ dependencies {
 	implementation 'org.springframework.retry:spring-retry'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+	implementation 'com.github.ua-parser:uap-java:1.5.4'
 }
 
 tasks.named('test') {

@@ -1,7 +1,5 @@
 package com.urlive.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.urlive.global.responseFormat.ApiResponse;
 import com.urlive.global.responseFormat.ApiResponseBuilder;
 import com.urlive.global.responseFormat.ResponseMessage;
@@ -15,8 +13,6 @@ import com.urlive.web.dto.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.userUrl.UserUrlResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,11 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.time.Instant;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @RestController
 public class UrliveController {
@@ -44,7 +36,6 @@ public class UrliveController {
 
     private final UrliveFacade urliveFacade;
     private final ApiResponseBuilder apiResponseBuilder;
-    private static final Logger logger = LoggerFactory.getLogger(UrliveController.class);
 
     @PostMapping("/user")
     public ResponseEntity<ApiResponse<UserResponse>> join(@RequestBody @Valid UserCreateRequest userCreateRequest) {
@@ -77,18 +68,9 @@ public class UrliveController {
     public ResponseEntity<ApiResponse<Void>> redirectToOriginalUrl(
             @PathVariable(name = "short-url") String shortUrl,
             HttpServletRequest request
-    ) throws JsonProcessingException {
+    ) {
         String originalUrl = urliveFacade.decodeShortUrl(shortUrl);
-
-        Map<String, Object> logMap = new LinkedHashMap<>();
-        logMap.put("event", "redirect");
-        logMap.put("shortUrl", shortUrl);
-        logMap.put("referer", request.getHeader("Referer"));
-        logMap.put("ip", request.getRemoteAddr());
-        logMap.put("ua", request.getHeader("User-Agent"));
-
-        logger.info(new ObjectMapper().writeValueAsString(logMap));
-
+        urliveFacade.createLog(request, shortUrl);
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(originalUrl));
 
