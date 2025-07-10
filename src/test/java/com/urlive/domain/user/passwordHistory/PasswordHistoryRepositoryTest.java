@@ -17,14 +17,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.urlive.service.PasswordService.FIRST_PAGE;
-import static com.urlive.service.PasswordService.PASSWORD_HISTORY_LIMIT;
+import static com.urlive.domain.user.passwordHistory.PasswordService.FIRST_PAGE;
+import static com.urlive.domain.user.passwordHistory.PasswordService.PASSWORD_HISTORY_LIMIT;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)

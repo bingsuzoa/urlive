@@ -1,12 +1,10 @@
-package com.urlive.service;
+package com.urlive.domain.userUrl;
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.user.User;
-import com.urlive.domain.userUrl.UserUrl;
-import com.urlive.domain.userUrl.UserUrlRepository;
-import com.urlive.web.dto.common.DtoFactory;
-import com.urlive.web.dto.userUrl.UpdateTitleRequest;
-import com.urlive.web.dto.userUrl.UserUrlResponse;
+import com.urlive.web.dto.domain.common.DtoFactory;
+import com.urlive.web.dto.domain.userUrl.UpdateTitleRequest;
+import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

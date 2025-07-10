@@ -1,9 +1,9 @@
 package com.urlive.web.dto.user;
 
+import com.urlive.web.dto.domain.user.UserLoginRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import jakarta.validation.constraints.NotBlank;
 import org.assertj.core.api.Assertions;
 import jakarta.validation.constraints.Pattern;
 import org.junit.jupiter.api.DisplayName;

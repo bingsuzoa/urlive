@@ -2,6 +2,7 @@ package com.urlive.service;
 
 import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.user.option.country.CountryRepository;
+import com.urlive.domain.user.option.country.CountryService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

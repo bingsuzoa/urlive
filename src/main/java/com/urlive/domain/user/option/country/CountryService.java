@@ -1,10 +1,6 @@
-package com.urlive.service;
+package com.urlive.domain.user.option.country;
 
 
-import com.urlive.domain.user.option.country.Country;
-import com.urlive.domain.user.option.country.CountryFetcher;
-import com.urlive.domain.user.option.country.CountryRepository;
-import com.urlive.domain.user.option.country.CountryResponse;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

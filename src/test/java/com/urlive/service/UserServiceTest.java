@@ -1,14 +1,17 @@
 package com.urlive.service;
 
 import com.urlive.domain.url.Url;
+import com.urlive.domain.user.UserService;
 import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.user.option.country.Country;
+import com.urlive.domain.user.option.country.CountryService;
+import com.urlive.domain.user.passwordHistory.PasswordService;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
-import com.urlive.web.dto.user.PasswordChangeRequest;
-import com.urlive.web.dto.user.UserCreateRequest;
+import com.urlive.web.dto.domain.user.PasswordChangeRequest;
+import com.urlive.web.dto.domain.user.UserCreateRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.testcontainers.shaded.org.checkerframework.checker.units.qual.C;
 
 import java.util.List;
 import java.util.Optional;

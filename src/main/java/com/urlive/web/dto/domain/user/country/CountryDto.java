@@ -1,4 +1,4 @@
-package com.urlive.web.dto.user.country;
+package com.urlive.web.dto.domain.user.country;
 
 public record CountryDto(
         Long id,

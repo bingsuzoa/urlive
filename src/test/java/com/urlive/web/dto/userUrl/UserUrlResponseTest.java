@@ -1,5 +1,6 @@
 package com.urlive.web.dto.userUrl;
 
+import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -2,8 +2,10 @@ package com.urlive.service;
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
+import com.urlive.domain.url.UrlService;
 import com.urlive.domain.url.shortUrlGenerator.ShortUrlGenerator;
-import com.urlive.web.dto.url.UrlCreateRequest;
+import com.urlive.domain.view.ViewService;
+import com.urlive.web.dto.domain.url.UrlCreateRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

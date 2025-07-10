@@ -1,7 +1,5 @@
-package com.urlive.service;
+package com.urlive.domain.user.passwordHistory;
 
-import com.urlive.domain.user.passwordHistory.PasswordHistory;
-import com.urlive.domain.user.passwordHistory.PasswordHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;

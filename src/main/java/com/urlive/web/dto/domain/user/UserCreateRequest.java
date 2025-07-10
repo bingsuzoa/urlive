@@ -1,4 +1,4 @@
-package com.urlive.web.dto.user;
+package com.urlive.web.dto.domain.user;
 
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.option.Gender;

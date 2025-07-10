@@ -1,4 +1,4 @@
-package com.urlive.service;
+package com.urlive.domain.view;
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;

@@ -5,6 +5,7 @@ import com.urlive.domain.user.User;
 import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.userUrl.UserUrl;
+import com.urlive.web.dto.domain.common.DtoFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

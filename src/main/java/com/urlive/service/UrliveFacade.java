@@ -1,18 +1,19 @@
 package com.urlive.service;
 
-import com.urlive.domain.infrastructure.Log;
 import com.urlive.domain.infrastructure.LogService;
 import com.urlive.domain.url.Url;
+import com.urlive.domain.url.UrlService;
 import com.urlive.domain.user.User;
-import com.urlive.web.dto.common.DtoFactory;
-import com.urlive.web.dto.url.UrlCreateRequest;
-import com.urlive.web.dto.user.PasswordChangeRequest;
-import com.urlive.web.dto.user.UserCreateRequest;
-import com.urlive.web.dto.user.UserLoginRequest;
-import com.urlive.web.dto.user.UserResponse;
-import com.urlive.web.dto.userUrl.UpdateTitleRequest;
-import com.urlive.web.dto.userUrl.UserUrlResponse;
-import jakarta.servlet.http.HttpServletRequest;
+import com.urlive.domain.user.UserService;
+import com.urlive.domain.userUrl.UserUrlService;
+import com.urlive.web.dto.domain.common.DtoFactory;
+import com.urlive.web.dto.domain.url.UrlCreateRequest;
+import com.urlive.web.dto.domain.user.PasswordChangeRequest;
+import com.urlive.web.dto.domain.user.UserCreateRequest;
+import com.urlive.web.dto.domain.user.UserLoginRequest;
+import com.urlive.web.dto.domain.user.UserResponse;
+import com.urlive.web.dto.domain.userUrl.UpdateTitleRequest;
+import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,9 +83,5 @@ public class UrliveFacade {
 
     public UserUrlResponse deleteUserUrl(Long id) {
         return userUrlService.deleteUserUrl(id);
-    }
-
-    public Log createLog(HttpServletRequest request, String shortUrl) {
-        return logService.createLog(request, shortUrl);
     }
 }

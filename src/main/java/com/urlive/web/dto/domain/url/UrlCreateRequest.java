@@ -1,4 +1,4 @@
-package com.urlive.web.dto.url;
+package com.urlive.web.dto.domain.url;
 
 
 import jakarta.validation.constraints.NotBlank;

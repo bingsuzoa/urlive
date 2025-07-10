@@ -3,7 +3,7 @@ package com.urlive.service.integrationTest;
 import com.urlive.config.AsyncSyncTestConfig;
 import com.urlive.config.TestRedisConfig;
 import com.urlive.domain.user.option.country.CountryRepository;
-import com.urlive.service.CountryService;
+import com.urlive.domain.user.option.country.CountryService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

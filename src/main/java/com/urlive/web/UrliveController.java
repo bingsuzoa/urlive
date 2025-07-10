@@ -4,22 +4,18 @@ import com.urlive.global.responseFormat.ApiResponse;
 import com.urlive.global.responseFormat.ApiResponseBuilder;
 import com.urlive.global.responseFormat.ResponseMessage;
 import com.urlive.service.UrliveFacade;
-import com.urlive.web.dto.url.UrlCreateRequest;
-import com.urlive.web.dto.user.PasswordChangeRequest;
-import com.urlive.web.dto.user.UserCreateRequest;
-import com.urlive.web.dto.user.UserLoginRequest;
-import com.urlive.web.dto.user.UserResponse;
-import com.urlive.web.dto.userUrl.UpdateTitleRequest;
-import com.urlive.web.dto.userUrl.UserUrlResponse;
-import jakarta.servlet.http.HttpServletRequest;
+import com.urlive.web.dto.domain.url.UrlCreateRequest;
+import com.urlive.web.dto.domain.user.PasswordChangeRequest;
+import com.urlive.web.dto.domain.user.UserCreateRequest;
+import com.urlive.web.dto.domain.user.UserLoginRequest;
+import com.urlive.web.dto.domain.user.UserResponse;
+import com.urlive.web.dto.domain.userUrl.UpdateTitleRequest;
+import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -62,21 +58,6 @@ public class UrliveController {
     @GetMapping("/users/{userId}/urls")
     public ResponseEntity<ApiResponse<List<UserUrlResponse>>> getUrlsByUserId(@PathVariable Long userId) {
         return apiResponseBuilder.ok(ResponseMessage.URLS_VIEW_SUCCESS, urliveFacade.getUrlsByUser(userId));
-    }
-
-    @GetMapping("/{short-url}")
-    public ResponseEntity<ApiResponse<Void>> redirectToOriginalUrl(
-            @PathVariable(name = "short-url") String shortUrl,
-            HttpServletRequest request
-    ) {
-        String originalUrl = urliveFacade.decodeShortUrl(shortUrl);
-        urliveFacade.createLog(request, shortUrl);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create(originalUrl));
-
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .headers(headers)
-                .build();
     }
 
     @PatchMapping("/user-urls/{userUrlId}")

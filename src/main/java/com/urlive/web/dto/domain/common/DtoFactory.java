@@ -1,13 +1,13 @@
-package com.urlive.web.dto.common;
+package com.urlive.web.dto.domain.common;
 
 
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.userUrl.UserUrl;
-import com.urlive.web.dto.user.UserResponse;
-import com.urlive.web.dto.user.country.CountryDto;
-import com.urlive.web.dto.userUrl.UserUrlResponse;
+import com.urlive.web.dto.domain.user.UserResponse;
+import com.urlive.web.dto.domain.user.country.CountryDto;
+import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

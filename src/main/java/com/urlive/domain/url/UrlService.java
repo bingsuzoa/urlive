@@ -1,9 +1,8 @@
-package com.urlive.service;
+package com.urlive.domain.url;
 
-import com.urlive.domain.url.Url;
-import com.urlive.domain.url.UrlRepository;
 import com.urlive.domain.url.shortUrlGenerator.ShortUrlGenerator;
-import com.urlive.web.dto.url.UrlCreateRequest;
+import com.urlive.domain.view.ViewService;
+import com.urlive.web.dto.domain.url.UrlCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
