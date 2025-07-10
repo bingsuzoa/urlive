@@ -28,4 +28,16 @@ public class LogDtoFactory {
         }
         return trafficsByReferer;
     }
+
+    public static List<TrafficByDevice> getTrafficsByDevice(List<Object[]> logs) {
+        List<TrafficByDevice> trafficByDevices = new ArrayList<>();
+
+        for(Object[] log : logs) {
+            LocalDate date = (LocalDate) log[0];
+            String device = (String) log[1];
+            int count = (int) log[2];
+            trafficByDevices.add(new TrafficByDevice(date, device, count));
+        }
+        return trafficByDevices;
+    }
 }

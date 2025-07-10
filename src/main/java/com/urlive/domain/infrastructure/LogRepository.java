@@ -21,7 +21,7 @@ public interface LogRepository extends JpaRepository<Log, Long> {
             order by date
             """
     )
-    List<Object[]> findLogByDateRange(
+    List<Object[]> findLogsByDateRange(
             @Param("shortUrl") String shortUrl,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
@@ -35,7 +35,20 @@ public interface LogRepository extends JpaRepository<Log, Long> {
             and l.createAt between :start and :end
             group by FUNCTION('date', l.created_at), l.referer
             """)
-    List<Object[]> findLogByReferer(
+    List<Object[]> findLogsByReferer(
+            @Param("shortUrl") String shortUrl,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    @Query("""
+            select FUNCTION('date', l.created_at) as date, l.device, count(l)
+            from Log l
+            where shortUrl = :shortUrl
+            and l.createdAt between :start and :end
+            group by FUNCTION('date', l.createdAt), l.device
+            """)
+    List<Object[]> findLogsByDevice(
             @Param("shortUrl") String shortUrl,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end

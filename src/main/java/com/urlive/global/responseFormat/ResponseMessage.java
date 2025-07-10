@@ -3,6 +3,7 @@ package com.urlive.global.responseFormat;
 public enum ResponseMessage {
     LOG_TRAFFIC_DATE_RANGE_SUCCESS("날짜별 유입량 조회 완료"),
     LOG_TRAFFIC_REFERER_SUCCESS("유입 경로 방문자 수 조회 완료"),
+    LOG_TRAFFIC_DEVICE_SUCCESS("디바이스별 방문자 수 조회 완료"),
     USER_CREATE_SUCCESS("사용자 DB 저장 완료"),
     USER_LOGIN_SUCCESS("사용자 로그인 성공"),
     SHORT_URL_CREATE_SUCCESS("단축 URL 생성 완료"),
