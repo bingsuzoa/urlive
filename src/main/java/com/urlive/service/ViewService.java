@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -59,11 +60,14 @@ public class ViewService {
                 continue;
             }
             Long viewCount = Long.valueOf(value);
+            Optional<Url> optionalUrl = urlRepository.findById(urlID);
 
-            Url url = urlRepository.findById(urlID)
-                    .orElseThrow(() -> new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL));
-
-            url.updateViewCount(viewCount);
+            if(optionalUrl.isPresent()) {
+                Url url = optionalUrl.get();
+                url.updateViewCount(viewCount);
+            } else {
+                redisTemplate.delete(key);
+            }
         }
     }
 
