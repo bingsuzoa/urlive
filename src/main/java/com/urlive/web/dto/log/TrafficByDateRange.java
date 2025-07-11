@@ -2,5 +2,5 @@ package com.urlive.web.dto.log;
 
 import java.time.LocalDate;
 
-public record TrafficByDateRange(LocalDate date, int count) {
+public record TrafficByDateRange(LocalDate date, long count) {
 }

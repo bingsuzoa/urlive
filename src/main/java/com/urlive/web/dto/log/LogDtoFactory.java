@@ -1,6 +1,7 @@
 package com.urlive.web.dto.log;
 
-import java.time.LocalDate;
+import java.time.*;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,9 @@ public class LogDtoFactory {
         List<TrafficByDateRange> trafficsByDateRange = new ArrayList<>();
 
         for (Object[] log : logs) {
-            LocalDate date = (LocalDate) log[0];
-            int count = (int) log[1];
+            Date sqlDate = (Date) log[0];
+            LocalDate date = sqlDate.toLocalDate();
+            Long count = (long) log[1];
             trafficsByDateRange.add(new TrafficByDateRange(date, count));
         }
         return trafficsByDateRange;
@@ -21,9 +23,10 @@ public class LogDtoFactory {
         List<TrafficByReferer> trafficsByReferer = new ArrayList<>();
 
         for(Object[] log : logs) {
-            LocalDate date = (LocalDate) log[0];
+            Date sqlDate = (Date) log[0];
+            LocalDate date = sqlDate.toLocalDate();
             String referer = (String) log[1];
-            int count = (int) log[2];
+            Long count = (long) log[2];
             trafficsByReferer.add(new TrafficByReferer(date, referer, count));
         }
         return trafficsByReferer;
@@ -33,9 +36,10 @@ public class LogDtoFactory {
         List<TrafficByDevice> trafficByDevices = new ArrayList<>();
 
         for(Object[] log : logs) {
-            LocalDate date = (LocalDate) log[0];
+            Date sqlDate = (Date) log[0];
+            LocalDate date = sqlDate.toLocalDate();
             String device = (String) log[1];
-            int count = (int) log[2];
+            Long count = (long) log[2];
             trafficByDevices.add(new TrafficByDevice(date, device, count));
         }
         return trafficByDevices;

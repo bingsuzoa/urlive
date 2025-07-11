@@ -1,4 +1,4 @@
-package com.urlive.domain.infrastructure;
+package com.urlive.domain.infrastructure.log;
 
 import com.urlive.domain.BaseEntity;
 import jakarta.persistence.AttributeOverride;

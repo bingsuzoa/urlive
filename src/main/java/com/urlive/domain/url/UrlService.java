@@ -48,13 +48,12 @@ public class UrlService {
     @Transactional
     public Url findOrCreateShortUrl(UrlCreateRequest urlCreateRequest) {
         String originalUrl = normalize(urlCreateRequest.originalUrl());
-        try {
-            String shortUrl = shortUrlGenerator.generateShortUrl();
-            urlRepository.save(new Url(originalUrl, shortUrl));
-            return urlRepository.findUrlWithUsersByOriginalUrl(originalUrl).get();
-        } catch (DataIntegrityViolationException e) {
-            return urlRepository.findUrlWithUsersByOriginalUrl(originalUrl).get();
-        }
+        return urlRepository.findUrlWithUsersByOriginalUrl(originalUrl)
+                .orElseGet(() -> {
+                    String shortUrl = shortUrlGenerator.generateShortUrl();
+                    Url url = urlRepository.save(new Url(originalUrl, shortUrl));
+                    return url;
+                });
     }
 
     private String normalize(String rawUrl) {

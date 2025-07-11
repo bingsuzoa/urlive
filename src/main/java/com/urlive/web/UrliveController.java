@@ -9,6 +9,7 @@ import com.urlive.web.dto.domain.user.PasswordChangeRequest;
 import com.urlive.web.dto.domain.user.UserCreateRequest;
 import com.urlive.web.dto.domain.user.UserLoginRequest;
 import com.urlive.web.dto.domain.user.UserResponse;
+import com.urlive.web.dto.domain.user.country.CountryDto;
 import com.urlive.web.dto.domain.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
 import jakarta.validation.Valid;
@@ -69,6 +70,11 @@ public class UrliveController {
     @DeleteMapping("/user-urls/{userUrlId}")
     public ResponseEntity<ApiResponse<UserUrlResponse>> deleteUserUrl(@PathVariable Long userUrlId) {
         return apiResponseBuilder.ok(ResponseMessage.USER_URL_DELETE_SUCCESS, urliveFacade.deleteUserUrl(userUrlId));
+    }
+
+    @GetMapping("/countries")
+    public ResponseEntity<ApiResponse<List<CountryDto>>> getCountry() {
+        return apiResponseBuilder.ok(ResponseMessage.COUNTRIES_GET_SUCCESS, urliveFacade.getCountries());
     }
 
 }

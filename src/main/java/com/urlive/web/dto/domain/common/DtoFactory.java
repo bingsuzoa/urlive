@@ -53,4 +53,13 @@ public class DtoFactory {
     public static CountryDto getCountryDto(Country country) {
         return new CountryDto(country.getId(), country.getIsoCode(), country.getName());
     }
+
+    public static List<CountryDto> getCountries(List<Country> countries) {
+        List<CountryDto> countryDtos = new ArrayList<>();
+
+        for(Country country : countries) {
+            countryDtos.add(new CountryDto(country.getId(), country.getIsoCode(), country.getName()));
+        }
+        return countryDtos;
+    }
 }

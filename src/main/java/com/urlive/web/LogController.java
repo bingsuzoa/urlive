@@ -1,6 +1,6 @@
 package com.urlive.web;
 
-import com.urlive.domain.infrastructure.LogService;
+import com.urlive.domain.infrastructure.log.LogService;
 import com.urlive.global.responseFormat.ApiResponse;
 import com.urlive.global.responseFormat.ApiResponseBuilder;
 import com.urlive.global.responseFormat.ResponseMessage;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class LogController {
@@ -54,35 +55,35 @@ public class LogController {
     }
 
     @GetMapping("/user-urls/{shortUrl}/date")
-    public ResponseEntity<ApiResponse<List<TrafficByDateRange>>> getTrafficByDateRange(
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getTrafficByDateRange(
             @PathVariable(name = "shortUrl") String shortUrl,
             @RequestParam("days") int days
     ) {
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = end.minusDays(days);
         return apiResponseBuilder.ok(ResponseMessage.LOG_TRAFFIC_DATE_RANGE_SUCCESS,
-                logService.getTrafficsByDateRange(start, end, shortUrl));
+                logService.getTrafficsByDateRange(days, start, end, shortUrl));
     }
 
     @GetMapping("/user-urls/{shortUrl}/referer")
-    public ResponseEntity<ApiResponse<List<TrafficByReferer>>> getRefererByDateRange(
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getRefererByDateRange(
             @PathVariable(name = "shortUrl") String shortUrl,
             @RequestParam("days") int days
     ) {
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = end.minusDays(days);
         return apiResponseBuilder.ok(ResponseMessage.LOG_TRAFFIC_REFERER_SUCCESS,
-                logService.getTrafficsByReferer(start, end, shortUrl));
+                logService.getTrafficsByReferer(days, start, end, shortUrl));
     }
 
     @GetMapping("/user-urls/{shortUrl}/device")
-    public ResponseEntity<ApiResponse<List<TrafficByDevice>>> getDevicesByDateRange(
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getDevicesByDateRange(
             @PathVariable(name = "shortUrl") String shortUrl,
             @RequestParam("days") int days
     ) {
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = end.minusDays(days);
         return apiResponseBuilder.ok(ResponseMessage.LOG_TRAFFIC_DEVICE_SUCCESS,
-                logService.getTrafficsByDevice(start, end, shortUrl));
+                logService.getTrafficsByDevice(days, start, end, shortUrl));
     }
 }

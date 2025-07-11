@@ -1,10 +1,11 @@
 package com.urlive.service;
 
-import com.urlive.domain.infrastructure.LogService;
+import com.urlive.domain.infrastructure.log.LogService;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlService;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserService;
+import com.urlive.domain.user.option.country.CountryService;
 import com.urlive.domain.userUrl.UserUrlService;
 import com.urlive.web.dto.domain.common.DtoFactory;
 import com.urlive.web.dto.domain.url.UrlCreateRequest;
@@ -12,6 +13,7 @@ import com.urlive.web.dto.domain.user.PasswordChangeRequest;
 import com.urlive.web.dto.domain.user.UserCreateRequest;
 import com.urlive.web.dto.domain.user.UserLoginRequest;
 import com.urlive.web.dto.domain.user.UserResponse;
+import com.urlive.web.dto.domain.user.country.CountryDto;
 import com.urlive.web.dto.domain.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,18 +34,21 @@ public class UrliveFacade {
             UserService userService,
             UrlService urlService,
             UserUrlService userUrlService,
-            LogService logService
+            LogService logService,
+            CountryService countryService
     ) {
         this.userService = userService;
         this.urlService = urlService;
         this.userUrlService = userUrlService;
         this.logService = logService;
+        this.countryService = countryService;
     }
 
     private UserService userService;
     private UrlService urlService;
     private UserUrlService userUrlService;
     private LogService logService;
+    private CountryService countryService;
 
     public UserResponse saveUser(UserCreateRequest userCreateRequest) {
         return userService.saveUser(userCreateRequest);
@@ -83,5 +88,9 @@ public class UrliveFacade {
 
     public UserUrlResponse deleteUserUrl(Long id) {
         return userUrlService.deleteUserUrl(id);
+    }
+
+    public List<CountryDto> getCountries() {
+        return countryService.getCountries();
     }
 }

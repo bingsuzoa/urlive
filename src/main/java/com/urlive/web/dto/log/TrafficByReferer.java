@@ -4,6 +4,6 @@ import java.time.LocalDate;
 
 public record TrafficByReferer(LocalDate date,
                                String referer,
-                               int count
+                               long count
 ) {
 }

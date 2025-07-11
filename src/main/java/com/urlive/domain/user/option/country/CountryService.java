@@ -1,6 +1,8 @@
 package com.urlive.domain.user.option.country;
 
 
+import com.urlive.web.dto.domain.common.DtoFactory;
+import com.urlive.web.dto.domain.user.country.CountryDto;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,12 @@ public class CountryService {
     public Country findByIsoCode(String isoCode) {
         return countryRepository.findByIsoCode(isoCode)
                 .orElseThrow(() -> new IllegalArgumentException(NOT_EXIST_COUNTRY));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CountryDto> getCountries() {
+        List<Country> countries = countryRepository.findAll();
+        return DtoFactory.getCountries(countries);
     }
 
     @Async

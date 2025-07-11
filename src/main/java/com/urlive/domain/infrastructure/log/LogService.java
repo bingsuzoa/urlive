@@ -1,7 +1,6 @@
-package com.urlive.domain.infrastructure;
+package com.urlive.domain.infrastructure.log;
 
 
-import com.urlive.web.dto.log.LogDtoFactory;
 import com.urlive.web.dto.log.TrafficByDateRange;
 import com.urlive.web.dto.log.TrafficByDevice;
 import com.urlive.web.dto.log.TrafficByReferer;
@@ -13,12 +12,16 @@ import ua_parser.Parser;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LogService {
 
-    public LogService(LogRepository logRepository) {
+    public LogService(
+            LogRepository logRepository,
+            DateRangeAggregator dateRangeAggregator) {
         this.logRepository = logRepository;
+        this.dateRangeAggregator = dateRangeAggregator;
     }
 
     private static String[] domains = {"naver", "kakao", "google", "instagram", "youtube"};
@@ -26,6 +29,7 @@ public class LogService {
     private static final Parser parser = new Parser();
 
     private final LogRepository logRepository;
+    private final DateRangeAggregator dateRangeAggregator;
 
 
     @Transactional
@@ -65,19 +69,21 @@ public class LogService {
         return Log.UNKNOWN_CONNECTION;
     }
 
-    public List<TrafficByDateRange> getTrafficsByDateRange(LocalDateTime start,
-                                                           LocalDateTime end, String shortUrl) {
-        return LogDtoFactory.getTrafficByDateRange(logRepository.findLogsByDateRange(shortUrl, start, end));
+    public List<Map<String, Object>> getTrafficsByDateRange(
+            int days, LocalDateTime start, LocalDateTime end, String shortUrl) {
+        return dateRangeAggregator.groupByInterval(logRepository.findLogsByDateRange(shortUrl, start, end), days);
     }
 
-    public List<TrafficByReferer> getTrafficsByReferer(LocalDateTime start,
-                                                       LocalDateTime end, String shortUrl) {
-        return LogDtoFactory.getTrafficsByReferer(logRepository.findLogsByReferer(shortUrl, start, end));
+    public List<Map<String, Object>> getTrafficsByReferer(
+            int days, LocalDateTime start, LocalDateTime end, String shortUrl
+    ) {
+        return dateRangeAggregator.groupByInterval(logRepository.findLogsByReferer(shortUrl, start, end), days);
     }
 
-    public List<TrafficByDevice> getTrafficsByDevice(LocalDateTime start,
-                                                     LocalDateTime end, String shortUrl) {
-        return LogDtoFactory.getTrafficsByDevice(logRepository.findLogsByDevice(shortUrl, start, end));
+    public List<Map<String, Object>> getTrafficsByDevice(
+            int days, LocalDateTime start, LocalDateTime end, String shortUrl
+    ) {
+        return dateRangeAggregator.groupByInterval(logRepository.findLogsByDevice(shortUrl, start, end), days);
     }
 
 }
