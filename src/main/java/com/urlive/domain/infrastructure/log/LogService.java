@@ -1,21 +1,24 @@
 package com.urlive.domain.infrastructure.log;
 
 
-import com.urlive.web.dto.log.TrafficByDateRange;
-import com.urlive.web.dto.log.TrafficByDevice;
-import com.urlive.web.dto.log.TrafficByReferer;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua_parser.Client;
 import ua_parser.Parser;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class LogService {
+
+    private static final Logger log = LoggerFactory.getLogger(LogService.class);
 
     public LogService(
             LogRepository logRepository,
@@ -71,19 +74,67 @@ public class LogService {
 
     public List<Map<String, Object>> getTrafficsByDateRange(
             int days, LocalDateTime start, LocalDateTime end, String shortUrl) {
+
+        if(days == 0 || days == 1) {
+            return getTrafficsByDatePerHour(days, shortUrl);
+        }
         return dateRangeAggregator.groupByInterval(logRepository.findLogsByDateRange(shortUrl, start, end), days);
     }
 
     public List<Map<String, Object>> getTrafficsByReferer(
             int days, LocalDateTime start, LocalDateTime end, String shortUrl
     ) {
+        if(days == 0 || days == 1) {
+            return getTrafficsByRefererPerHour(days, shortUrl);
+        }
         return dateRangeAggregator.groupByInterval(logRepository.findLogsByReferer(shortUrl, start, end), days);
     }
 
     public List<Map<String, Object>> getTrafficsByDevice(
             int days, LocalDateTime start, LocalDateTime end, String shortUrl
     ) {
+        if(days == 0 || days == 1) {
+            return getTrafficsByDevicePerHour(days, shortUrl);
+        }
         return dateRangeAggregator.groupByInterval(logRepository.findLogsByDevice(shortUrl, start, end), days);
+    }
+
+    private List<Map<String, Object>> getTrafficsByDatePerHour(int days, String shortUrl) {
+        String[] range = getDateRangeByDays(days);
+        String start = range[0];
+        String end = range[1];
+        return dateRangeAggregator.groupByPerTime(logRepository.findLogsPerTime(shortUrl, start, end));
+    }
+
+    private List<Map<String, Object>> getTrafficsByRefererPerHour(int days, String shortUrl) {
+        String[] range = getDateRangeByDays(days);
+        String start = range[0];
+        String end = range[1];
+        return dateRangeAggregator.groupByPerTime(logRepository.findLogsByRefererPerTime(shortUrl, start, end));
+    }
+
+    private List<Map<String, Object>> getTrafficsByDevicePerHour(int days, String shortUrl) {
+        String[] range = getDateRangeByDays(days);
+        String start = range[0];
+        String end = range[1];
+        return dateRangeAggregator.groupByPerTime(logRepository.findLogsByDevicePerTime(shortUrl, start, end));
+    }
+
+    private String[] getDateRangeByDays(int days) {
+        DateTimeFormatter startFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd 00:00");
+        DateTimeFormatter endFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd 23:59");
+
+        if (days == 0) {
+            LocalDateTime now = LocalDateTime.now();
+            String start = startFormatter.format(now);
+            String end = endFormatter.format(now);
+            return new String[]{start, end};
+        }
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+        String start = startFormatter.format(yesterday);
+        String end = startFormatter.format(yesterday);
+        return new String[]{start, end};
     }
 
 }

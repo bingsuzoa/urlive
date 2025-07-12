@@ -54,4 +54,44 @@ public interface LogRepository extends JpaRepository<Log, Long> {
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );
+
+
+    @Query(value = """
+            select DATE_FORMAT(created_at, '%H:00:00') as date, count(*) as visitCount
+            from Log 
+            where short_url = :shortUrl
+                and created_at between :start and :end
+            group by DATE_FORMAT(created_at, '%H:00:00')
+            """, nativeQuery = true)
+    List<Object[]> findLogsPerTime(
+            @Param("shortUrl") String shortUrl,
+            @Param("start") String start,
+            @Param("end") String end
+    );
+
+    @Query(value = """
+            select DATE_FORMAT(created_at, '%H:00:00') as date, referer, count(*) as visitCount
+            from Log 
+            where short_url = :shortUrl
+                and created_at between :start and :end
+            group by DATE_FORMAT(created_at, '%H:00:00'), referer
+            """, nativeQuery = true)
+    List<Object[]> findLogsByRefererPerTime(
+            @Param("shortUrl") String shortUrl,
+            @Param("start") String start,
+            @Param("end") String end
+    );
+
+    @Query(value = """
+            select DATE_FORMAT(created_at, '%H:00:00') as date, device, count(*) as visitCount
+            from Log 
+            where short_url = :shortUrl
+                and created_at between :start and :end
+            group by DATE_FORMAT(created_at, '%H:00:00'), device
+            """, nativeQuery = true)
+    List<Object[]> findLogsByDevicePerTime(
+            @Param("shortUrl") String shortUrl,
+            @Param("start") String start,
+            @Param("end") String end
+    );
 }
