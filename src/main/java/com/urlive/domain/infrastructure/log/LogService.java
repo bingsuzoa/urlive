@@ -75,7 +75,7 @@ public class LogService {
     public List<Map<String, Object>> getTrafficsByDateRange(
             int days, LocalDateTime start, LocalDateTime end, String shortUrl) {
 
-        if(days == 0 || days == 1) {
+        if (days == 0 || days == 1) {
             return getTrafficsByDatePerHour(days, shortUrl);
         }
         return dateRangeAggregator.groupByInterval(logRepository.findLogsByDateRange(shortUrl, start, end), days);
@@ -84,7 +84,7 @@ public class LogService {
     public List<Map<String, Object>> getTrafficsByReferer(
             int days, LocalDateTime start, LocalDateTime end, String shortUrl
     ) {
-        if(days == 0 || days == 1) {
+        if (days == 0 || days == 1) {
             return getTrafficsByRefererPerHour(days, shortUrl);
         }
         return dateRangeAggregator.groupByInterval(logRepository.findLogsByReferer(shortUrl, start, end), days);
@@ -93,7 +93,7 @@ public class LogService {
     public List<Map<String, Object>> getTrafficsByDevice(
             int days, LocalDateTime start, LocalDateTime end, String shortUrl
     ) {
-        if(days == 0 || days == 1) {
+        if (days == 0 || days == 1) {
             return getTrafficsByDevicePerHour(days, shortUrl);
         }
         return dateRangeAggregator.groupByInterval(logRepository.findLogsByDevice(shortUrl, start, end), days);

@@ -16,9 +16,9 @@ public class Log extends BaseEntity {
     public Log(String shortUrl, String rawReferer, String referer, String ip, String device) {
         this.shortUrl = shortUrl;
         this.rawReferer = isBlank(rawReferer) ? UNKNOWN_CONNECTION : rawReferer;
-        this.referer = isBlank(referer) ? UNKNOWN_CONNECTION : rawReferer;
-        this.ip = isBlank(ip) ? UNKNOWN_CONNECTION : rawReferer;
-        this.device = isBlank(device) ? UNKNOWN_CONNECTION : rawReferer;
+        this.referer = isBlank(referer) ? UNKNOWN_CONNECTION : referer;
+        this.ip = isBlank(ip) ? UNKNOWN_CONNECTION : ip;
+        this.device = isBlank(device) ? UNKNOWN_CONNECTION : device;
     }
 
     public static String UNKNOWN_CONNECTION = "unknown";
