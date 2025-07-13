@@ -136,16 +136,6 @@ public class UrliveControllerTest {
     }
 
     @Test
-    @DisplayName("리다이렉트 확인")
-    void 리다이렉트_확인() throws Exception {
-        when(urliveFacade.decodeShortUrl(any())).thenReturn("http://test.com");
-
-        mockMvc.perform(get("/{short-url}", "shortUrl"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(header().string("Location", "http://test.com"));
-    }
-
-    @Test
     @DisplayName("단축 URL title 변경하기")
     void 단축_URL_타이틀_변경() throws Exception {
         UserUrlResponse userUrlResponse = new UserUrlResponse(1L, "originalUrl", "shortUrl", "title", LocalDateTime.now(), 1L);

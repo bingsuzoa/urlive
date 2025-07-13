@@ -15,7 +15,7 @@ public class DateRangeAggregator {
     private static String DEFAULT_CATEGORY = "count";
     private static String UNKNOWN_INFLOW = "unknown";
 
-    public List<Map<String, Object>> groupByInterval(List<Object[]> logs, int days) {
+    public List<Map<String, Object>> groupByInterval(List<Object[]> logs, int days, LocalDate endDate) {
         if (logs == null || logs.isEmpty()) {
             return Collections.emptyList();
         }
@@ -23,7 +23,6 @@ public class DateRangeAggregator {
         int intervalDays = getIntervalForRange(days);
         logs.sort(Comparator.comparing(o -> (Date) o[0]));
 
-        LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusDays(days - 1);
 
         List<LocalDate> ranges = new ArrayList<>();

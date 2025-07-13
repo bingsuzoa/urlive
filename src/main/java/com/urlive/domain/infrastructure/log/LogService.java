@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua_parser.Client;
 import ua_parser.Parser;
 
 import java.time.LocalDate;
@@ -30,6 +29,7 @@ public class LogService {
     private static String[] domains = {"naver", "kakao", "google", "instagram", "youtube"};
     private static String[] devices = {"iPhone", "Android", "Windows"};
     private static final Parser parser = new Parser();
+    private static LocalDate today = LocalDate.now();
 
     private final LogRepository logRepository;
     private final DateRangeAggregator dateRangeAggregator;
@@ -50,7 +50,7 @@ public class LogService {
             return Log.UNKNOWN_CONNECTION;
         }
         for (String domain : domains) {
-            if (rawReferer.equals(domain)) {
+            if (rawReferer.contains(domain)) {
                 return domain;
             }
         }
@@ -61,11 +61,17 @@ public class LogService {
         if (userAgent == null || userAgent.isEmpty()) {
             return Log.UNKNOWN_CONNECTION;
         }
-        Client client = parser.parse(userAgent);
-        String os = client.os.family;
+
+        userAgent = userAgent.toLowerCase();
 
         for (String device : devices) {
-            if (os.equalsIgnoreCase(device)) {
+            if (userAgent.contains("iphone")) {
+                return device;
+            }
+            if (userAgent.contains("android")) {
+                return device;
+            }
+            if (userAgent.contains("mac")) {
                 return device;
             }
         }
@@ -78,7 +84,7 @@ public class LogService {
         if (days == 0 || days == 1) {
             return getTrafficsByDatePerHour(days, shortUrl);
         }
-        return dateRangeAggregator.groupByInterval(logRepository.findLogsByDateRange(shortUrl, start, end), days);
+        return dateRangeAggregator.groupByInterval(logRepository.findLogsByDateRange(shortUrl, start, end), days, today);
     }
 
     public List<Map<String, Object>> getTrafficsByReferer(
@@ -87,7 +93,7 @@ public class LogService {
         if (days == 0 || days == 1) {
             return getTrafficsByRefererPerHour(days, shortUrl);
         }
-        return dateRangeAggregator.groupByInterval(logRepository.findLogsByReferer(shortUrl, start, end), days);
+        return dateRangeAggregator.groupByInterval(logRepository.findLogsByReferer(shortUrl, start, end), days, today);
     }
 
     public List<Map<String, Object>> getTrafficsByDevice(
@@ -96,7 +102,7 @@ public class LogService {
         if (days == 0 || days == 1) {
             return getTrafficsByDevicePerHour(days, shortUrl);
         }
-        return dateRangeAggregator.groupByInterval(logRepository.findLogsByDevice(shortUrl, start, end), days);
+        return dateRangeAggregator.groupByInterval(logRepository.findLogsByDevice(shortUrl, start, end), days, today);
     }
 
     private List<Map<String, Object>> getTrafficsByDatePerHour(int days, String shortUrl) {
@@ -133,7 +139,7 @@ public class LogService {
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1);
         String start = startFormatter.format(yesterday);
-        String end = startFormatter.format(yesterday);
+        String end = endFormatter.format(yesterday);
         return new String[]{start, end};
     }
 

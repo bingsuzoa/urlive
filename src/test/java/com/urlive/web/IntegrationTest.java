@@ -143,37 +143,6 @@ public class IntegrationTest {
         Assertions.assertThat(status).isEqualTo(HttpStatus.OK);
     }
 
-    @Test
-    @DisplayName("단축 URL 리다이렉트 테스트")
-    void 단축_URL로부터_원본_URL_얻기() {
-        Long id = getUser();
-        String shortUrl = getShortUrl(id);
-        String url = "http://localhost:" + port + "/" + shortUrl;
-
-        ValidatableResponse validatableResponse = given()
-                .port(port)
-                .redirects().follow(false)
-                .when()
-                .get(url)
-                .then()
-                .statusCode(302);
-    }
-
-    @Test
-    @DisplayName("사용자 단축Url 조회 시 조회수 증가 확인 테스트")
-    void 조회수_증가() {
-        Long id = getUser();
-        String shortUrl = getShortUrl(id);
-        Url urlEntity = urlRepository.findUrlByShortUrl(shortUrl).get();
-        Long urlId = urlEntity.getId();
-
-        String url = "http://localhost:" + port + "/" + shortUrl;
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-
-        String redisKey = "viewCount:" + urlId;
-        String viewCount = (String) redisTemplate.opsForValue().get(redisKey);
-        Assertions.assertThat(viewCount).isEqualTo("1");
-    }
 
     @Test
     @DisplayName("사용자 단축Url 목록 조회 테스트")

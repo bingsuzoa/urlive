@@ -77,7 +77,6 @@ public class LogRepositoryTest {
         String start = "2025-07-12 00:00";
         String end = "2025-07-12 23:59";
         List<Object[]> result = logRepository.findLogsPerTime("shortUrl1", start, end);
-
         Assertions.assertThat(result.size()).isEqualTo(2);
     }
 
