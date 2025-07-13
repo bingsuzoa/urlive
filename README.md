@@ -51,3 +51,24 @@
 
 🔆 사용자의 단축 URL을 삭제한다.<br/>
 
+### <span style = 'color : #FFCD28'>그래프 구성</span><br/>
+
+- [X] 기간 필터를 통해 원하는 날짜 범위를 설정할 수 있어야 한다.<br/><br/>
+<img src="images/1.jpg" alt="실행 화면" width="400"/>
+
+- [X] 사용자는 최근 7일간의 방문 트렌드를 그래프로 확인할 수 있다.<br/><br/>
+<p float="left">
+  <img src="images/2.jpg" width="400" />
+  <img src="images/3.jpg" width="400" />
+</p>
+
+- [X] 유입 경로(referrer)별 방문자 수를 실시간 그래프로 시각화한다.<br/><br/>
+<p float="left">
+  <img src="images/4.jpg" width="400" />
+  <img src="images/5.jpg" width="400" />
+</p>
+
+- [X] 사용자 디바이스(PC, 모바일 등)별 방문자 수를 실시간 그래프로 시각화한다.<br/><br/>
+<img src="images/6.jpg" alt="실행 화면" width="400"/>
+
+
