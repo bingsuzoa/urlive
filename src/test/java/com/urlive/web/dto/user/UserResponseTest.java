@@ -1,7 +1,8 @@
 package com.urlive.web.dto.user;
 
 import com.urlive.domain.user.option.Gender;
-import com.urlive.domain.user.option.country.Country;
+import com.urlive.web.dto.domain.user.UserResponse;
+import com.urlive.web.dto.domain.user.country.CountryDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,13 +17,13 @@ public class UserResponseTest {
                 "abc123",
                 20250503,
                 Gender.WOMEN,
-                new Country("KR", "대한민국")
+                new CountryDto(1L, "KR", "korea")
         );
 
         Assertions.assertThat(response.id()).isEqualTo(1L);
         Assertions.assertThat(response.name()).isEqualTo("abc123");
         Assertions.assertThat(response.age()).isEqualTo(20250503);
         Assertions.assertThat(response.gender()).isEqualTo(Gender.WOMEN);
-        Assertions.assertThat(response.country().getIsoCode()).isEqualTo("KR");
+        Assertions.assertThat(response.countryDto().isoCode()).isEqualTo("KR");
     }
 }

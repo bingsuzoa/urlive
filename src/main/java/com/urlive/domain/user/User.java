@@ -38,6 +38,7 @@ public class User extends BaseEntity {
     }
 
     public static final String NOT_EXIST_USER_ID = "존재하지 않는 회원입니다.";
+    public static final String NOT_MATCH_PASSWORD = "비밀번호가 일치하지 않습니다.";
 
     @Column(nullable = false)
     private String name;
@@ -55,8 +56,8 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Gender gender;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(unique = true, name = "country_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
     @OneToMany(mappedBy = "user")

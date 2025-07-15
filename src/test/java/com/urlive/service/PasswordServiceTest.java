@@ -5,6 +5,7 @@ import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.user.passwordHistory.PasswordHistory;
 import com.urlive.domain.user.passwordHistory.PasswordHistoryRepository;
+import com.urlive.domain.user.passwordHistory.PasswordService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

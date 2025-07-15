@@ -4,20 +4,19 @@ import com.urlive.global.responseFormat.ApiResponse;
 import com.urlive.global.responseFormat.ApiResponseBuilder;
 import com.urlive.global.responseFormat.ResponseMessage;
 import com.urlive.service.UrliveFacade;
-import com.urlive.web.dto.url.UrlCreateRequest;
-import com.urlive.web.dto.user.PasswordChangeRequest;
-import com.urlive.web.dto.user.UserCreateRequest;
-import com.urlive.web.dto.user.UserResponse;
-import com.urlive.web.dto.userUrl.UpdateTitleRequest;
-import com.urlive.web.dto.userUrl.UserUrlResponse;
+import com.urlive.web.dto.domain.url.UrlCreateRequest;
+import com.urlive.web.dto.domain.user.PasswordChangeRequest;
+import com.urlive.web.dto.domain.user.UserCreateRequest;
+import com.urlive.web.dto.domain.user.UserLoginRequest;
+import com.urlive.web.dto.domain.user.UserResponse;
+import com.urlive.web.dto.domain.user.country.CountryDto;
+import com.urlive.web.dto.domain.userUrl.UpdateTitleRequest;
+import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -40,6 +39,11 @@ public class UrliveController {
         return apiResponseBuilder.created(ResponseMessage.USER_CREATE_SUCCESS, urliveFacade.saveUser(userCreateRequest));
     }
 
+    @PostMapping("/user/login")
+    public ResponseEntity<ApiResponse<UserResponse>> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+        return apiResponseBuilder.ok(ResponseMessage.USER_LOGIN_SUCCESS, urliveFacade.loginUser(userLoginRequest));
+    }
+
     @PatchMapping("/user/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> changeUserPassword(@PathVariable Long id,
                                                                         @RequestBody @Valid PasswordChangeRequest passwordChangeRequest) {
@@ -57,17 +61,6 @@ public class UrliveController {
         return apiResponseBuilder.ok(ResponseMessage.URLS_VIEW_SUCCESS, urliveFacade.getUrlsByUser(userId));
     }
 
-    @GetMapping("/{short-url}")
-    public ResponseEntity<ApiResponse<Void>> redirectToOriginalUrl(@PathVariable(name = "short-url") String shortUrl) {
-        String originalUrl = urliveFacade.decodeShortUrl(shortUrl);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create(originalUrl));
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .headers(headers)
-                .build();
-    }
-
     @PatchMapping("/user-urls/{userUrlId}")
     public ResponseEntity<ApiResponse<UserUrlResponse>> updateTitle(@PathVariable Long userUrlId,
                                                                     @RequestBody @Valid UpdateTitleRequest updateTitleRequest) {
@@ -77,6 +70,11 @@ public class UrliveController {
     @DeleteMapping("/user-urls/{userUrlId}")
     public ResponseEntity<ApiResponse<UserUrlResponse>> deleteUserUrl(@PathVariable Long userUrlId) {
         return apiResponseBuilder.ok(ResponseMessage.USER_URL_DELETE_SUCCESS, urliveFacade.deleteUserUrl(userUrlId));
+    }
+
+    @GetMapping("/countries")
+    public ResponseEntity<ApiResponse<List<CountryDto>>> getCountry() {
+        return apiResponseBuilder.ok(ResponseMessage.COUNTRIES_GET_SUCCESS, urliveFacade.getCountries());
     }
 
 }

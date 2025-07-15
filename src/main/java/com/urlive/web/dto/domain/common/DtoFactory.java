@@ -1,0 +1,65 @@
+package com.urlive.web.dto.domain.common;
+
+
+import com.urlive.domain.user.User;
+import com.urlive.domain.user.option.Gender;
+import com.urlive.domain.user.option.country.Country;
+import com.urlive.domain.userUrl.UserUrl;
+import com.urlive.web.dto.domain.user.UserResponse;
+import com.urlive.web.dto.domain.user.country.CountryDto;
+import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+public class DtoFactory {
+
+    public static UserResponse createUserResponseDto(User user) {
+        Long id = user.getId();
+        String name = user.getName();
+        int age = user.getAge();
+        Gender gender = user.getGender();
+        CountryDto countryDto = DtoFactory.getCountryDto(user.getCountry());
+        return new UserResponse(id, name, age, gender, countryDto);
+    }
+
+    public static List<UserUrlResponse> getBoardDto(List<UserUrl> userUrls) {
+        List<UserUrlResponse> userUrlsResponse = new ArrayList<>();
+
+        for (UserUrl userUrl : userUrls) {
+            Long id = userUrl.getId();
+            String originalUrl = userUrl.getOriginalUrl();
+            String shortUrl = userUrl.getShortUrl();
+            String title = userUrl.getTitle();
+            LocalDateTime createdAt = userUrl.getCreateTime();
+            Long viewCount = userUrl.getViewCount();
+
+            userUrlsResponse.add(new UserUrlResponse(id, originalUrl, shortUrl, title, createdAt, viewCount));
+        }
+        return userUrlsResponse;
+    }
+
+    public static UserUrlResponse getUserUrlDto(UserUrl userUrl) {
+        Long id = userUrl.getId();
+        String originalUrl = userUrl.getOriginalUrl();
+        String shortUrl = userUrl.getShortUrl();
+        String title = userUrl.getTitle();
+        LocalDateTime createdAt = userUrl.getCreateTime();
+        Long viewCount = userUrl.getViewCount();
+        return new UserUrlResponse(id, originalUrl, shortUrl, title, createdAt, viewCount);
+    }
+
+    public static CountryDto getCountryDto(Country country) {
+        return new CountryDto(country.getId(), country.getIsoCode(), country.getName());
+    }
+
+    public static List<CountryDto> getCountries(List<Country> countries) {
+        List<CountryDto> countryDtos = new ArrayList<>();
+
+        for(Country country : countries) {
+            countryDtos.add(new CountryDto(country.getId(), country.getIsoCode(), country.getName()));
+        }
+        return countryDtos;
+    }
+}

@@ -2,6 +2,7 @@ package com.urlive.web.dto.user;
 
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.option.Gender;
+import com.urlive.web.dto.domain.user.UserCreateRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -77,7 +78,7 @@ public class UserCreateRequestTest {
 
         assertFalse(violations.isEmpty());
         boolean isValidation = violations.stream()
-                .anyMatch(v -> v.getConstraintDescriptor().getAnnotation() instanceof Size);
+                .anyMatch(v -> v.getConstraintDescriptor().getAnnotation() instanceof Pattern);
         assertTrue(isValidation);
     }
 
@@ -152,12 +153,12 @@ public class UserCreateRequestTest {
     @DisplayName("국가 null일 경우 예외")
     void 국가_null() {
         Validator validator = setUp();
-        UserCreateRequest request = new UserCreateRequest("test123", "010-1234-5678", "test123", 20250603, 1, null);
+        UserCreateRequest request = new UserCreateRequest("test123", "010-1234-5678", "test123", 20250603, 1, "");
         Set<ConstraintViolation<UserCreateRequest>> violations = validator.validate(request);
 
         assertFalse(violations.isEmpty());
         boolean isValidation = violations.stream()
-                .anyMatch(v -> v.getConstraintDescriptor().getAnnotation() instanceof NotNull);
+                .anyMatch(v -> v.getConstraintDescriptor().getAnnotation() instanceof NotBlank);
         assertTrue(isValidation);
     }
 }

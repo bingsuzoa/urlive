@@ -34,6 +34,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+src/test/resources/application-test.yml
 
 ### NetBeans ###
 /nbproject/private/

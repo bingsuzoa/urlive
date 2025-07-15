@@ -1,5 +1,6 @@
 package com.urlive.web.dto.user;
 
+import com.urlive.web.dto.domain.user.PasswordChangeRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

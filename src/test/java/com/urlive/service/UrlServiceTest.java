@@ -2,8 +2,10 @@ package com.urlive.service;
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
+import com.urlive.domain.url.UrlService;
 import com.urlive.domain.url.shortUrlGenerator.ShortUrlGenerator;
-import com.urlive.web.dto.url.UrlCreateRequest;
+import com.urlive.domain.view.ViewService;
+import com.urlive.web.dto.domain.url.UrlCreateRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,8 +47,9 @@ public class UrlServiceTest {
         Url url = new Url(originalUrl, shortUrl);
         ReflectionTestUtils.setField(url, "id", 1253L);
 
-        when(urlRepository.findUrlByOriginalUrl(any())).thenReturn(Optional.empty());
+        when(shortUrlGenerator.generateShortUrl()).thenReturn(shortUrl);
         when(urlRepository.save(any())).thenReturn(url);
+        when(urlRepository.findUrlWithUsersByOriginalUrl(any())).thenReturn(Optional.of(url));
 
         Assertions.assertThat(urlService.findOrCreateShortUrl(request)).isEqualTo(url);
     }
@@ -58,13 +61,11 @@ public class UrlServiceTest {
         when(urlRepository.save(any())).thenThrow(new DataIntegrityViolationException("중복 에러"));
 
         Url existingUrl = new Url(originalUrl, shortUrl);
-
-        when(urlRepository.findUrlByOriginalUrl(any())).thenReturn(Optional.of(existingUrl));
-
+        when(urlRepository.findUrlWithUsersByOriginalUrl(any())).thenReturn(Optional.of(existingUrl));
         Assertions.assertThat(urlService.findOrCreateShortUrl(request)).isEqualTo(existingUrl);
     }
 
-    /// //에러 테스트
+    /// //////////////////////에러 테스트
     @Test
     @DisplayName("단축URL 디코딩 테스트 : 조회되는 Url이 없으면 예외")
     void 단축_url_디코딩_예외() {

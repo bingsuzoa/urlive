@@ -1,25 +1,32 @@
 package com.urlive.domain.userUrl;
 
 
+import com.urlive.config.AsyncSyncTestConfig;
+import com.urlive.config.TestRedisConfig;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
-import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
+import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.option.country.Country;
-import jakarta.persistence.EntityManager;
+import com.urlive.domain.user.option.country.CountryRepository;
 import org.assertj.core.api.Assertions;
 import org.hibernate.Hibernate;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import({AsyncSyncTestConfig.class, TestRedisConfig.class})
+@ActiveProfiles("test")
 public class UserUrlRepositoryTest {
 
     @Autowired
@@ -32,43 +39,41 @@ public class UserUrlRepositoryTest {
     private UserUrlRepository userUrlRepository;
 
     @Autowired
-    private EntityManager em;
+    private CountryRepository countryRepository;
 
-    Long setUp() {
-        User user = userRepository.save(new User("test", "01012345678", "1234", 2025, Gender.MEN, new Country("KR", "대한민국")));
+    @AfterEach
+    void deleteAll() {
+        userUrlRepository.deleteAll();
+        userRepository.deleteAll();
+        urlRepository.deleteAll();
+    }
 
-        Url url1 = new Url("http://test1.com", "test1ShortUrl");
-        urlRepository.save(url1);
+    User getUser() {
+        countryRepository.save(new Country("KR", "대한민국"));
+        Country country = countryRepository.findByIsoCode("KR").get();
+        return userRepository.save(new User("test", "01012345678", "user1111",
+                20250312, Gender.WOMEN, country));
+    }
+
+    @Test
+    @DisplayName("userId로 userUrl 목록 등록하기")
+    void userUrl_등록하기() {
+        User user = getUser();
+        Url url = urlRepository.save(new Url("http://original.com", "shortUrl"));
+        Assertions.assertThat(userUrlRepository.save(new UserUrl(user, url))).isNotNull();
+    }
+
+    @Test
+    @DisplayName("user의 url목록 랜더링 위해 fetch join으로 가져옴 : 초기화 true확인")
+    void fetch_join_확인() {
+        User user = getUser();
+        Url url1 = urlRepository.save(new Url("http://original.com", "shortUrl"));
+        Url url2 = urlRepository.save(new Url("http://test2.com", "shortUrl2"));
         userUrlRepository.save(new UserUrl(user, url1));
-        Url url2 = new Url("http://test2.com", "test2ShortUrl");
-        urlRepository.save(url2);
         userUrlRepository.save(new UserUrl(user, url2));
-        Url url3 = new Url("http://test3.com", "test3ShortUrl");
-        urlRepository.save(url3);
-        userUrlRepository.save(new UserUrl(user, url3));
-        return user.getId();
-    }
 
-    @Test
-    @DisplayName("userId로 userUrl 목록 가져오기")
-    void userUrl조회() {
-        Long userId = setUp();
-        List<UserUrl> userUrls = userUrlRepository.findUserUrls(userId);
-
-        Assertions.assertThat(userUrls.size()).isEqualTo(3);
-        Assertions.assertThat(userUrls.getFirst().getOriginalUrl()).isNotNull();
-    }
-
-    @Test
-    @DisplayName("userId로 userUrl에서 USER 초기화 안한 상태 확인하기")
-    void user_지연로딩_확인() {
-        Long userId = setUp();
-        em.flush();
-        em.clear();
-
-        List<UserUrl> userUrls = userUrlRepository.findUserUrls(userId);
-
-        Object userProxy = userUrls.getFirst().getUser();
-        Assertions.assertThat(Hibernate.isInitialized(userProxy)).isFalse();
+        List<UserUrl> userUrls = userUrlRepository.findUserUrls(user.getId());
+        Object notProxy = userUrls.getFirst().getUser();
+        Assertions.assertThat(Hibernate.isInitialized(notProxy)).isTrue();
     }
 }

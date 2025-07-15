@@ -3,7 +3,7 @@ package com.urlive.service.integrationTest;
 
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
-import com.urlive.service.ViewService;
+import com.urlive.domain.view.ViewService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,20 +1,22 @@
 package com.urlive.service.integrationTest;
 
+import com.urlive.config.AsyncSyncTestConfig;
+import com.urlive.config.TestRedisConfig;
 import com.urlive.domain.url.Url;
 import com.urlive.domain.url.UrlRepository;
-import com.urlive.service.UrlService;
-import com.urlive.web.dto.url.UrlCreateRequest;
+import com.urlive.domain.url.UrlService;
+import com.urlive.web.dto.domain.url.UrlCreateRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureMockMvc(addFilters = false)
+@Import({AsyncSyncTestConfig.class, TestRedisConfig.class})
 public class UrlServiceIntegrationTest {
 
     @Autowired

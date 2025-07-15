@@ -1,6 +1,5 @@
 package com.urlive.domain.view;
 
-import com.urlive.service.ViewService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

@@ -35,4 +35,8 @@ public class BaseEntity {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
+
+    public void setCreatedAtForTest(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

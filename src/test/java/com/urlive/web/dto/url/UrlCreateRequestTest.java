@@ -1,5 +1,6 @@
 package com.urlive.web.dto.url;
 
+import com.urlive.web.dto.domain.url.UrlCreateRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

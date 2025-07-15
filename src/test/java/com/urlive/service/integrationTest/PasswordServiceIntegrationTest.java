@@ -1,5 +1,7 @@
 package com.urlive.service.integrationTest;
 
+import com.urlive.config.AsyncSyncTestConfig;
+import com.urlive.config.TestRedisConfig;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.user.option.Gender;
@@ -7,25 +9,23 @@ import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.user.option.country.CountryRepository;
 import com.urlive.domain.user.passwordHistory.PasswordHistory;
 import com.urlive.domain.user.passwordHistory.PasswordHistoryRepository;
-import com.urlive.service.CountryService;
-import com.urlive.service.PasswordService;
+import com.urlive.domain.user.passwordHistory.PasswordService;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureMockMvc(addFilters = false)
+@Import({AsyncSyncTestConfig.class, TestRedisConfig.class})
 public class PasswordServiceIntegrationTest {
 
     @Autowired
@@ -39,6 +39,12 @@ public class PasswordServiceIntegrationTest {
 
     @Autowired
     private PasswordHistoryRepository passwordHistoryRepository;
+
+    @AfterEach
+    void deleteAll() {
+        userRepository.deleteAll();
+        passwordHistoryRepository.deleteAll();
+    }
 
     /// ////해피 테스트
     @Test
@@ -65,7 +71,7 @@ public class PasswordServiceIntegrationTest {
 
         User user = userRepository.save(new User("test", "01012345678", encodedPassword, 20250604, Gender.WOMEN, country));
         passwordHistoryRepository.save(new PasswordHistory(user, encodedPassword));
-        Assertions.assertThat(passwordService.changePassword(1L, rawPassword)).isNotNull();
+        Assertions.assertThat(passwordService.changePassword(user.getId(), rawPassword)).isNotNull();
     }
 
     /// ////에러 테스트

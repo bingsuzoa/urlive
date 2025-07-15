@@ -1,19 +1,20 @@
 package com.urlive.service.integrationTest;
 
-import com.urlive.domain.user.option.country.Country;
+import com.urlive.config.AsyncSyncTestConfig;
+import com.urlive.config.TestRedisConfig;
 import com.urlive.domain.user.option.country.CountryRepository;
-import com.urlive.service.CountryService;
+import com.urlive.domain.user.option.country.CountryService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureMockMvc(addFilters = false)
+@Import({AsyncSyncTestConfig.class, TestRedisConfig.class})
 public class CountryServiceIntegrationTest {
 
     @Autowired

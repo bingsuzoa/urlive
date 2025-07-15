@@ -1,14 +1,17 @@
 package com.urlive.service;
 
 import com.urlive.domain.url.Url;
+import com.urlive.domain.user.UserService;
 import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.user.option.country.Country;
+import com.urlive.domain.user.option.country.CountryService;
+import com.urlive.domain.user.passwordHistory.PasswordService;
 import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
-import com.urlive.web.dto.user.PasswordChangeRequest;
-import com.urlive.web.dto.user.UserCreateRequest;
+import com.urlive.web.dto.domain.user.PasswordChangeRequest;
+import com.urlive.web.dto.domain.user.UserCreateRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +39,9 @@ public class UserServiceTest {
     @Mock
     private PasswordService passwordService;
 
+    @Mock
+    private CountryService countryService;
+
     @InjectMocks
     private UserService userService;
 
@@ -45,9 +51,11 @@ public class UserServiceTest {
         UserCreateRequest userCreateRequest =
                 new UserCreateRequest("test", "01012345678", "test123", 20250604, 1, "KR");
         String encodedPassword = "encodedPassword";
-        when(passwordService.encode(any())).thenReturn(encodedPassword);
         User user = new User("test", "01012345678", encodedPassword, 20250604, Gender.WOMEN, new Country("KR", "대한민국"));
+        Country country = new Country("KR", "korea");
+        when(passwordService.encode(any())).thenReturn(encodedPassword);
         when(userRepository.save(any())).thenReturn(user);
+        when(countryService.findByIsoCode(any())).thenReturn(country);
 
         Assertions.assertThat(userService.saveUser(userCreateRequest)).isNotNull();
         Assertions.assertThat(userService.saveUser(userCreateRequest).gender()).isEqualTo(Gender.WOMEN);

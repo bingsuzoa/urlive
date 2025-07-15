@@ -1,24 +1,26 @@
-## 단축 URL 기반 실시간 인기 순위 플랫폼
-### 목표 : API 개발, 프로그램의 필수적인 기능 완성
+## 단축 URL 기반 사용자 맞춤 통계 제공 서비스
 
 ### <span style = 'color : #FFCD28'>요구 사항</span><br/>
 
-- [ ] 사용자가 입력한 URL을 조건에 따라 단축 URL로 변환할 수 있어야 한다.<br/><br/>
-- [ ] 단축된 URL을 복사할 수 있는 기능을 제공한다.<br/><br/>
-- [ ] 사용자가 변환한 URL 목록을 확인할 수 있어야 한다.<br/><br/>
-- [ ] 각 URL에는 [방문 기록 추적] 기능이 포함되어야 한다.<br/><br/>
-- [ ] [방문 기록 추적] 기능에서는 해당 URL의 총 조회 수와 유입 경로를 확인할 수 있어야 한다.<br/><br/>
-- [ ] 실시간으로 가장 많이 클릭된 URL Top 10을 확인할 수 있어야 한다.br/><br/>
-- [ ] 해당 순위는 국가별(예: 한국, 미국, 일본)로 필터링이 가능하다.<br/><br/>
-- [ ] 연령대별(10대~60대) 인기 순위 확인도 지원한다.<br/><br/>
-- [ ] 일정 조회 수를 초과한 단축 URL은 클릭 시 광고 배너를 노출한다.<br/><br/>
-- [ ] 노출되는 광고는 해당 URL의 주제와 관련 있는 콘텐츠로 매칭된다.<br/><br/>
+- [X] 사용자가 입력한 URL을 조건에 따라 단축 URL로 변환할 수 있어야 한다.<br/><br/>
+- [X] 사용자가 변환한 URL 목록을 확인할 수 있어야 한다.<br/><br/>
+- [X] 각 URL에는 [방문 기록 추적] 기능이 포함되어야 한다.<br/><br/>
+- [X] 사용자는 최근 7일간의 방문 트렌드를 그래프로 확인할 수 있다.<br/><br/>
+- [X] 기간 필터를 통해 원하는 날짜 범위를 설정할 수 있어야 한다.<br/><br/>
+- [X] 유입 경로(referrer)별 방문자 수를 실시간 그래프로 시각화한다.<br/><br/>
+- [X] 사용자 디바이스(PC, 모바일 등)별 방문자 수를 실시간 그래프로 시각화한다.<br/><br/>
+
 
 ### <span style = 'color : #FFCD28'>API 구성</span><br/>
 
 #### *<span style = 'color : #A8F552'>@PostMapping("/user")</span>*<br/>
 
 🔆 회원가입을 처리한다.<br/>
+🔆 입력값이 유효하지 않을 경우 예외를 발생시킨다.<br/>
+
+#### *<span style = 'color : #A8F552'>@PostMapping("/user/login")</span>*<br/>
+
+🔆 사용자의 로그인 요청을 처리한다.<br/>
 🔆 입력값이 유효하지 않을 경우 예외를 발생시킨다.<br/>
 
 #### *<span style = 'color : #A8F552'>@PatchMapping("/user/{id}")</span>*<br/>
@@ -48,4 +50,25 @@
 #### *<span style = 'color : #A8F552'>@DeleteMapping("/user-urls/{userUrlId}")</span>*<br/>
 
 🔆 사용자의 단축 URL을 삭제한다.<br/>
+
+### <span style = 'color : #FFCD28'>그래프 구성</span><br/>
+
+- [X] 기간 필터를 통해 원하는 날짜 범위를 설정할 수 있어야 한다.<br/><br/>
+<img src="images/1.jpg" alt="실행 화면" width="400"/>
+
+- [X] 사용자는 최근 7일간의 방문 트렌드를 그래프로 확인할 수 있다.<br/><br/>
+<p float="left">
+  <img src="images/2.jpg" width="400" />
+  <img src="images/3.jpg" width="400" />
+</p>
+
+- [X] 유입 경로(referrer)별 방문자 수를 실시간 그래프로 시각화한다.<br/><br/>
+<p float="left">
+  <img src="images/4.jpg" width="400" />
+  <img src="images/5.jpg" width="400" />
+</p>
+
+- [X] 사용자 디바이스(PC, 모바일 등)별 방문자 수를 실시간 그래프로 시각화한다.<br/><br/>
+<img src="images/6.jpg" alt="실행 화면" width="400"/>
+
 
