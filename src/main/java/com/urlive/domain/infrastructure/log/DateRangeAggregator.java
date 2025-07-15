@@ -87,7 +87,7 @@ public class DateRangeAggregator {
         }
 
         Map<String, Map<String, Long>> grouped = new LinkedHashMap<>();
-        for (int hour = 0; hour < 24; hour++) {
+        for (int hour = 0; hour < 24; hour += 3) {
             String time = String.format("%02d:00:00", hour);
             grouped.put(time, new HashMap<>());
         }
@@ -98,6 +98,10 @@ public class DateRangeAggregator {
             String category;
             long count;
 
+            int hour = Integer.parseInt(date.substring(0, 2));
+            hour = (hour / 3) * 3;
+            String parsedDate = String.format("%02d:00:00", hour);
+
             if (log.length == 2) {
                 category = DEFAULT_CATEGORY;
                 count = ((Number) log[1]).longValue();
@@ -106,13 +110,13 @@ public class DateRangeAggregator {
                 count = ((Number) log[2]).longValue();
             }
 
-            Map<String, Long> stats = grouped.get(date);
+            Map<String, Long> stats = grouped.get(parsedDate);
             stats.put(category, stats.getOrDefault(category, 0L) + count);
             uniqueSet.add(category);
         }
 
-        for(Map<String, Long> stats : grouped.values()) {
-            for(String cat : uniqueSet) {
+        for (Map<String, Long> stats : grouped.values()) {
+            for (String cat : uniqueSet) {
                 stats.putIfAbsent(cat, 0L);
             }
         }
