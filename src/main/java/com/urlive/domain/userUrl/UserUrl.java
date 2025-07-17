@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "user_url")
 @AttributeOverride(name = "id", column = @Column(name = "user_url_id"))
 public class UserUrl extends BaseEntity {
 

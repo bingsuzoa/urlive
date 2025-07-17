@@ -13,7 +13,7 @@ public interface LogRepository extends JpaRepository<Log, Long> {
 
     @Query(value = """
             select DATE(created_at) as date, count(*) as visitCount
-            from Log
+            from log
             where short_url = :shortUrl 
             and created_at between :start and :end
             group by date
@@ -29,7 +29,7 @@ public interface LogRepository extends JpaRepository<Log, Long> {
 
     @Query(value = """
             select DATE(created_at) as date, referer, count(*) as visitCount
-            from Log
+            from log
             where short_url = :shortUrl 
             and created_at between :start and :end
             group by date, referer
@@ -43,7 +43,7 @@ public interface LogRepository extends JpaRepository<Log, Long> {
 
     @Query(value = """
             select DATE(created_at) as date, device, count(*) as visitCount
-            from Log
+            from log
             where short_url = :shortUrl 
             and created_at between :start and :end
             group by date, device
@@ -58,7 +58,7 @@ public interface LogRepository extends JpaRepository<Log, Long> {
 
     @Query(value = """
             select DATE_FORMAT(created_at, '%H:00:00') as date, count(*) as visitCount
-            from Log 
+            from log
             where short_url = :shortUrl
                 and created_at between :start and :end
             group by DATE_FORMAT(created_at, '%H:00:00')
@@ -71,7 +71,7 @@ public interface LogRepository extends JpaRepository<Log, Long> {
 
     @Query(value = """
             select DATE_FORMAT(created_at, '%H:00:00') as date, referer, count(*) as visitCount
-            from Log 
+            from log
             where short_url = :shortUrl
                 and created_at between :start and :end
             group by DATE_FORMAT(created_at, '%H:00:00'), referer
@@ -84,7 +84,7 @@ public interface LogRepository extends JpaRepository<Log, Long> {
 
     @Query(value = """
             select DATE_FORMAT(created_at, '%H:00:00') as date, device, count(*) as visitCount
-            from Log 
+            from log
             where short_url = :shortUrl
                 and created_at between :start and :end
             group by DATE_FORMAT(created_at, '%H:00:00'), device

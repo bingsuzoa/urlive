@@ -6,6 +6,7 @@ import com.urlive.domain.user.User;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "password_history")
 @AttributeOverride(name = "id", column = @Column(name = "password_history_id"))
 public class PasswordHistory extends BaseEntity {
 

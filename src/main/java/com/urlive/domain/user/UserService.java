@@ -8,10 +8,7 @@ import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.domain.userUrl.UserUrlRepository;
 import com.urlive.web.dto.domain.common.DtoFactory;
 import com.urlive.web.dto.domain.url.UrlCreateRequest;
-import com.urlive.web.dto.domain.user.PasswordChangeRequest;
-import com.urlive.web.dto.domain.user.UserCreateRequest;
-import com.urlive.web.dto.domain.user.UserLoginRequest;
-import com.urlive.web.dto.domain.user.UserResponse;
+import com.urlive.web.dto.domain.user.*;
 import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +44,15 @@ public class UserService {
         Country country = countryService.findByIsoCode(userCreateRequest.isoCode());
         User user = userRepository.save(userCreateRequest.toEntityWithEncodedPassword(encodedPassword, country));
         return DtoFactory.createUserResponseDto(user);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isDuplicatePhoneNumber(String phoneNumber) {
+        Optional<User> optionalUser = userRepository.findUserByPhoneNumber(phoneNumber);
+        if(optionalUser.isPresent()) {
+            throw new IllegalArgumentException(User.ALREADY_EXIST_USER);
+        }
+        return false;
     }
 
     @Transactional(readOnly = true)

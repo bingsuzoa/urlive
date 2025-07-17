@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "view")
 @AttributeOverride(name = "id", column = @Column(name = "view_id"))
 public class View extends BaseEntity {
 

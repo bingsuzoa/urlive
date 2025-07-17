@@ -26,7 +26,7 @@ public class UrlService {
         this.shortUrlGenerator = shortUrlGenerator;
     }
 
-    private static final String INVALID_ORIGINAL_URL = "유효하지 않은 URL 입니다.";
+    private static final String INVALID_ORIGINAL_URL = "유효 하지 않은 URL 입니다.";
 
     private final UrlRepository urlRepository;
     private final ViewService viewService;
@@ -57,18 +57,16 @@ public class UrlService {
     }
 
     private String normalize(String rawUrl) {
-        try {
-            URI uri = new URI(rawUrl);
-
-            String schema = uri.getScheme() != null ? uri.getScheme().toLowerCase() : "https";
-            String host = uri.getHost() != null ? uri.getHost().toLowerCase() : "";
-            int port = uri.getPort();
-            String path = uri.getPath() != null && !uri.getPath().isEmpty() ? uri.getPath() : "/";
-            String authority = (port == -1 || port == 80 || port == 443) ? host : host + ":" + port;
-            return schema + "://" + authority + path;
-
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException(INVALID_ORIGINAL_URL);
+        if (rawUrl == null || rawUrl.trim().isEmpty()) {
+            throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
         }
+
+        String trimmedUrl = rawUrl.trim();
+
+        if (trimmedUrl.startsWith("http://") || trimmedUrl.startsWith("https://")) {
+            return trimmedUrl;
+        }
+
+        return "https://" + trimmedUrl;
     }
 }

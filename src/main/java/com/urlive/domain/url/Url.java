@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@Table(name = "url")
 @AttributeOverride(name = "id", column = @Column(name = "url_id"))
 public class Url extends BaseEntity {
 
@@ -25,7 +26,7 @@ public class Url extends BaseEntity {
         users = new HashSet<>();
     }
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 767)
     private String originalUrl;
 
     @Column(unique = true)

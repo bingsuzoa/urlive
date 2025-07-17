@@ -14,4 +14,8 @@ public class ApiResponseBuilder {
     public <T> ResponseEntity<ApiResponse<T>> ok(ResponseMessage message, T data) {
         return ResponseEntity.ok(new ApiResponse<>(200, message.getMessage(), data));
     }
+
+    public <Void> ResponseEntity<ApiResponse<Void>> ok(ResponseMessage message) {
+        return ResponseEntity.ok(new ApiResponse<>(200, message.getMessage(), null));
+    }
 }

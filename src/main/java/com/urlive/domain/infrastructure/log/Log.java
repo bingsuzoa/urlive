@@ -4,8 +4,10 @@ import com.urlive.domain.BaseEntity;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "log")
 @AttributeOverride(name = "id", column = @Column(name = "log_id"))
 public class Log extends BaseEntity {
 

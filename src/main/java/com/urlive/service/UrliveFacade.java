@@ -9,10 +9,7 @@ import com.urlive.domain.user.option.country.CountryService;
 import com.urlive.domain.userUrl.UserUrlService;
 import com.urlive.web.dto.domain.common.DtoFactory;
 import com.urlive.web.dto.domain.url.UrlCreateRequest;
-import com.urlive.web.dto.domain.user.PasswordChangeRequest;
-import com.urlive.web.dto.domain.user.UserCreateRequest;
-import com.urlive.web.dto.domain.user.UserLoginRequest;
-import com.urlive.web.dto.domain.user.UserResponse;
+import com.urlive.web.dto.domain.user.*;
 import com.urlive.web.dto.domain.user.country.CountryDto;
 import com.urlive.web.dto.domain.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
@@ -56,6 +53,10 @@ public class UrliveFacade {
 
     public UserResponse loginUser(UserLoginRequest userLoginRequest) {
         return userService.loginUser(userLoginRequest);
+    }
+
+    public void isDuplicatePhoneNumber(String phoneNumber) {
+        userService.isDuplicatePhoneNumber(phoneNumber);
     }
 
     public UserResponse changePassword(Long id, PasswordChangeRequest passwordChangeRequest) {

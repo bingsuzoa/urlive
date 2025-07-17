@@ -5,10 +5,7 @@ import com.urlive.global.responseFormat.ApiResponseBuilder;
 import com.urlive.global.responseFormat.ResponseMessage;
 import com.urlive.service.UrliveFacade;
 import com.urlive.web.dto.domain.url.UrlCreateRequest;
-import com.urlive.web.dto.domain.user.PasswordChangeRequest;
-import com.urlive.web.dto.domain.user.UserCreateRequest;
-import com.urlive.web.dto.domain.user.UserLoginRequest;
-import com.urlive.web.dto.domain.user.UserResponse;
+import com.urlive.web.dto.domain.user.*;
 import com.urlive.web.dto.domain.user.country.CountryDto;
 import com.urlive.web.dto.domain.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
@@ -37,6 +34,12 @@ public class UrliveController {
     @PostMapping("/user")
     public ResponseEntity<ApiResponse<UserResponse>> join(@RequestBody @Valid UserCreateRequest userCreateRequest) {
         return apiResponseBuilder.created(ResponseMessage.USER_CREATE_SUCCESS, urliveFacade.saveUser(userCreateRequest));
+    }
+
+    @GetMapping("/user/phoneNumber")
+    public ResponseEntity<ApiResponse<Void>> isDuplicatePhoneNumber(@RequestParam("phoneNumber") String phoneNumber) {
+        urliveFacade.isDuplicatePhoneNumber(phoneNumber);
+        return apiResponseBuilder.ok(ResponseMessage.USER_DUPLICATE_CONFIRM_SUCCESS);
     }
 
     @PostMapping("/user/login")

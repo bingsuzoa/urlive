@@ -16,9 +16,9 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
-                "http://localhost:8000",
-                "http://127.0.0.1:8000",
-                "http://127.0.0.1:54157"));
+                "http://52.78.139.77",
+                "http://www.urlive.co.kr",
+                "https://www.urlive.co.kr"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
