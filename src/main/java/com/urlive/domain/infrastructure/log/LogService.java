@@ -27,7 +27,7 @@ public class LogService {
     }
 
     private static String[] domains = {"naver", "kakao", "google", "instagram", "youtube"};
-    private static String[] devices = {"iPhone", "Android", "Windows"};
+    private static String[] devices = {"iPhone", "Android", "Windows", "Mac"};
     private static final Parser parser = new Parser();
     private static LocalDate today = LocalDate.now();
 
@@ -37,6 +37,7 @@ public class LogService {
 
     @Transactional
     public Log createLog(HttpServletRequest request, String shortUrl) {
+        System.out.println(request.getHeader("User-Agent"));
         String rawReferer = request.getHeader("Referer");
         String ip = request.getRemoteAddr();
         String userAgent = request.getHeader("User-Agent");
@@ -65,14 +66,8 @@ public class LogService {
         userAgent = userAgent.toLowerCase();
 
         for (String device : devices) {
-            if (userAgent.contains("iphone")) {
-                return device;
-            }
-            if (userAgent.contains("android")) {
-                return device;
-            }
-            if (userAgent.contains("mac")) {
-                return device;
+            if (userAgent.contains(device.toLowerCase())) {
+                return device; 
             }
         }
         return Log.UNKNOWN_CONNECTION;

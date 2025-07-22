@@ -1,6 +1,7 @@
 package com.urlive.domain.infrastructure.log;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,11 @@ public class LogRepositoryTest {
         Log log3 = new Log("shortUrl1", "unknown", "google", "231.180.227.51", "iPhone");
         log3.setCreatedAtForTest(LocalDateTime.parse("2025-07-01 16:10", formatter));
         logRepository.save(log3);
+    }
+
+    @AfterEach
+    void deleteAll() {
+        logRepository.deleteAll();
     }
 
     @Test

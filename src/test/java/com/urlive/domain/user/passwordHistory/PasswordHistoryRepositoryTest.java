@@ -7,7 +7,6 @@ import com.urlive.domain.user.UserRepository;
 import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.user.option.country.CountryRepository;
-import com.urlive.domain.userUrl.UserUrlRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,9 +38,6 @@ public class PasswordHistoryRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserUrlRepository userUrlRepository;
-
     @AfterEach
     void delete() {
         passwordHistoryRepository.deleteAll();
@@ -52,7 +48,7 @@ public class PasswordHistoryRepositoryTest {
     @Test
     @DisplayName("과거 변경했던 비밀번호 중 가장 최근 비밀번호 2개 조회하기")
     void 과거_비밀번호_조회() throws InterruptedException {
-        Country country = countryRepository.saveAndFlush(new Country("KR", "South Korea"));
+        Country country = countryRepository.save(new Country("KOREA", "대한민국"));
         User firstUser = new User("test", "01011112222", "test1234",
                 20250312, Gender.MEN, country);
         User user = userRepository.saveAndFlush(firstUser);

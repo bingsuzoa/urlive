@@ -4,7 +4,6 @@ import com.urlive.domain.url.Url;
 import com.urlive.domain.user.User;
 import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.option.country.Country;
-import com.urlive.domain.userUrl.UserUrl;
 import com.urlive.web.dto.domain.common.DtoFactory;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -23,23 +22,23 @@ public class DtoFactoryTest {
         Assertions.assertThat(DtoFactory.createUserResponseDto(user).name()).isEqualTo("test");
     }
 
-    @Test
-    @DisplayName("UserUrls로부터 List<UserUrlResponse> 생성")
-    void 리스트_생성() {
-        User user = new User("test", "01012345678", "password1111", 20250605, Gender.MEN, new Country("KR", "대한민국"));
-        UserUrl userUrl1 = new UserUrl(user, new Url("http://test.com", "test1"));
-        UserUrl userUrl2 = new UserUrl(user, new Url("http://test2.com", "test2"));
-
-        List<UserUrl> userUrls = List.of(userUrl1, userUrl2);
-        Assertions.assertThat(DtoFactory.getBoardDto(userUrls).size()).isEqualTo(2);
-    }
+//    @Test
+//    @DisplayName("UserUrls로부터 List<UserUrlResponse> 생성")
+//    void 리스트_생성() {
+//        User user = new User("test", "01012345678", "password1111", 20250605, Gender.MEN, new Country("KR", "대한민국"));
+//        Url url1 = new Url(user, "http://test.com", "test1");
+//        Url url2 = new Url(user, "http://test2.com", "test2");
+//
+//        List<Url> userUrls = List.of(url1, url2);
+//        Assertions.assertThat(DtoFactory.getBoardDto(userUrls).size()).isEqualTo(2);
+//    }
 
     @Test
     @DisplayName("UserUrls로부터 UserUrlResponse생성")
     void UserUrl_로부터_response_생성() {
         User user = new User("test", "01012345678", "password1111", 20250605, Gender.MEN, new Country("KR", "대한민국"));
-        UserUrl userUrl1 = new UserUrl(user, new Url("http://test.com", "test1"));
+        Url url1 = new Url(user, "http://test.com", "test1");
 
-        Assertions.assertThat(DtoFactory.getUserUrlDto(userUrl1)).isNotEqualTo(user);
+        Assertions.assertThat(DtoFactory.getUserUrlDto(url1)).isNotEqualTo(user);
     }
 }

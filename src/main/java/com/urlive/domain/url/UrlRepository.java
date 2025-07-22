@@ -13,10 +13,4 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
     Optional<Url> findUrlByOriginalUrl(String originalUrl);
 
     Optional<Url> findUrlByShortUrl(String shortUrl);
-
-    @Query("select u from Url u left join fetch u.views where u.id = :id")
-    Optional<Url> findUrlWithViews(@Param("id") Long id);
-
-    @Query("select u from Url u left join fetch u.users where u.originalUrl = :originalUrl")
-    Optional<Url> findUrlWithUsersByOriginalUrl(@Param("originalUrl") String originalUrl);
 }

@@ -1,10 +1,10 @@
 package com.urlive.domain.user;
 
 import com.urlive.domain.BaseEntity;
+import com.urlive.domain.url.Url;
 import com.urlive.domain.user.option.Gender;
 import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.user.passwordHistory.PasswordHistory;
-import com.urlive.domain.userUrl.UserUrl;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -32,7 +32,6 @@ public class User extends BaseEntity {
         this.age = age;
         this.gender = gender;
         this.country = country;
-        this.urls = new HashSet<>();
         PasswordHistory passwordHistory = new PasswordHistory(this, password);
         passwordHistories.add(passwordHistory);
     }
@@ -53,16 +52,16 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 4)
     private int age;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Url> urls = new HashSet<>();
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Gender gender;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id", nullable = false)
     private Country country;
-
-    @OneToMany(mappedBy = "user")
-    private Set<UserUrl> urls = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private Set<PasswordHistory> passwordHistories = new HashSet<>();
@@ -97,11 +96,7 @@ public class User extends BaseEntity {
         return country;
     }
 
-    public Set<UserUrl> getUrls() {
+    public Set<Url> getUrls() {
         return urls;
-    }
-
-    public Set<PasswordHistory> getPasswordHistories() {
-        return passwordHistories;
     }
 }

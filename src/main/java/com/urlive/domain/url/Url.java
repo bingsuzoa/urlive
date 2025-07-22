@@ -1,14 +1,8 @@
 package com.urlive.domain.url;
 
 import com.urlive.domain.BaseEntity;
-import com.urlive.domain.userUrl.UserUrl;
-import com.urlive.domain.view.View;
+import com.urlive.domain.user.User;
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "url")
@@ -19,12 +13,18 @@ public class Url extends BaseEntity {
 
     }
 
-    public Url(String originalUrl, String shortUrl) {
+    public Url(User user, String originalUrl, String shortUrl) {
+        this.user = user;
         this.originalUrl = originalUrl;
         this.shortUrl = shortUrl;
-        views = new ArrayList<>();
-        users = new HashSet<>();
+        user.getUrls().add(this);
     }
+
+    public static final String NOT_EXIST_SHORT_URL = "입력하신 단축 URL은 없는 URL입니다.";
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(unique = true, nullable = false, length = 767)
     private String originalUrl;
@@ -32,16 +32,11 @@ public class Url extends BaseEntity {
     @Column(unique = true)
     private String shortUrl;
 
+    @Column(nullable = false, columnDefinition = "varchar(255) default ''")
+    private String title = "";
+
     @Column(columnDefinition = "bigint default 0")
     private Long viewCount = 0L;
-
-    @OneToMany(mappedBy = "url", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<View> views = new ArrayList<>();
-
-    @OneToMany(mappedBy = "url")
-    private Set<UserUrl> users = new HashSet<>();
-
-    public static final String NOT_EXIST_SHORT_URL = "입력하신 단축 URL은 없는 URL입니다.";
 
     public String getOriginalUrl() {
         return originalUrl;
@@ -53,27 +48,22 @@ public class Url extends BaseEntity {
 
     public void increaseViewCount() {
         viewCount++;
-        views.add(new View(this));
-    }
-
-    public void updateViewCount(Long viewCount) {
-        this.viewCount = viewCount;
-    }
-
-    public List<View> getViews() {
-        return views;
-    }
-
-    public void addView(View view) {
-        views.add(view);
-    }
-
-    public Set<UserUrl> getUsers() {
-        return users;
     }
 
     public Long getViewCount() {
         return viewCount;
     }
 
+    public Long getUser() {
+        return user.getId();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Url updateTitle(String title) {
+        this.title = title;
+        return this;
+    }
 }

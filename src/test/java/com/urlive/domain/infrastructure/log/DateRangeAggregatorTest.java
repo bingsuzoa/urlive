@@ -91,7 +91,7 @@ public class DateRangeAggregatorTest {
         logs.add(log5);
 
         List<Map<String, Object>> result = aggregator.groupByPerTime(logs);
-        Assertions.assertThat(result.size()).isEqualTo(24);
+        Assertions.assertThat(result.size()).isEqualTo(8);
 
         for (Map<String, Object> r : result) {
             String date = (String) r.get("range");

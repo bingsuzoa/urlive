@@ -18,4 +18,9 @@ public class ApiResponseBuilder {
     public <Void> ResponseEntity<ApiResponse<Void>> ok(ResponseMessage message) {
         return ResponseEntity.ok(new ApiResponse<>(200, message.getMessage(), null));
     }
+
+    public <Void> ResponseEntity<ApiResponse<Void>> badRequest(ResponseMessage message) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse<>(400, message.getMessage(), null));
+    }
 }

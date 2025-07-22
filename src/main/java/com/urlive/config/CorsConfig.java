@@ -18,7 +18,9 @@ public class CorsConfig {
         config.setAllowedOrigins(List.of(
                 "http://52.78.139.77",
                 "http://www.urlive.co.kr",
-                "https://www.urlive.co.kr"));
+                "https://www.urlive.co.kr",
+                "https://urlive.co.kr",
+                "http://urlive.co.kr"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

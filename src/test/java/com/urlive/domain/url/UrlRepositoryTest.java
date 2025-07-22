@@ -1,9 +1,12 @@
 package com.urlive.domain.url;
 
+import com.urlive.config.AsyncSyncTestConfig;
+import com.urlive.config.TestRedisConfig;
+import com.urlive.domain.user.User;
 import com.urlive.domain.user.UserRepository;
+import com.urlive.domain.user.option.Gender;
+import com.urlive.domain.user.option.country.Country;
 import com.urlive.domain.user.option.country.CountryRepository;
-import com.urlive.domain.userUrl.UserUrlRepository;
-import com.urlive.domain.view.ViewRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,8 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.shaded.org.checkerframework.checker.units.qual.C;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -26,29 +30,23 @@ public class UrlRepositoryTest {
     private UserRepository userRepository;
 
     @Autowired
-    private UserUrlRepository userUrlRepository;
-
-    @Autowired
-    private ViewRepository viewRepository;
-
-    @Autowired
     private CountryRepository countryRepository;
 
 
     private static final String originalUrl = "http://test.com";
     private static final String shortUrl = "testShortUrl";
 
-
     Url setUp() {
-        return urlRepository.save(new Url(originalUrl, shortUrl));
+        Country country = countryRepository.save(new Country("KOREA", "korea"));
+        User user = userRepository.save(new User("test", "01012345678", "1234", 2025, Gender.MEN, country));
+        return urlRepository.save(new Url(user, originalUrl, shortUrl));
     }
 
     @AfterEach
     void delete() {
+        urlRepository.deleteAll();
         userRepository.deleteAll();
         countryRepository.deleteAll();
-        urlRepository.deleteAll();
-        userUrlRepository.deleteAll();
     }
 
     @Test

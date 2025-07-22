@@ -2,7 +2,9 @@ package com.urlive.domain.user.option.country;
 
 
 import com.urlive.web.dto.domain.common.DtoFactory;
-import com.urlive.web.dto.domain.user.country.CountryDto;
+import com.urlive.web.dto.domain.user.countryDto.CountryDto;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class CountryService {
     }
 
     private static final String NOT_EXIST_COUNTRY = "존재하지 않는 국가 코드입니다.";
+    private static final String FETCHING_COUNTRIES_FROM_DATABASE = "DB로부터 국가 데이터를 가져옵니다.";
     private final CountryFetcher countryFetcher;
     private final CountryRepository countryRepository;
 
@@ -31,13 +34,16 @@ public class CountryService {
                 .orElseThrow(() -> new IllegalArgumentException(NOT_EXIST_COUNTRY));
     }
 
+    @Cacheable(value = "countries")
     @Transactional(readOnly = true)
     public List<CountryDto> getCountries() {
+        System.out.println(FETCHING_COUNTRIES_FROM_DATABASE);
         List<Country> countries = countryRepository.findAll();
         return DtoFactory.getCountries(countries);
     }
 
     @Async
+    @Transactional
     public void initCountries() {
         if(countryRepository.count() == 0) {
             List<CountryResponse> countryResponses = countryFetcher.fetchCountries();
@@ -49,6 +55,8 @@ public class CountryService {
     }
 
     @Scheduled(cron = "0 0 3 ? * MON")
+    @CacheEvict(value = "countries", allEntries = true)
+    @Transactional
     public void updateCountriesWeekly() {
         List<CountryResponse> countryResponses = countryFetcher.fetchCountries();
         List<Country> countries = countryResponses.stream()

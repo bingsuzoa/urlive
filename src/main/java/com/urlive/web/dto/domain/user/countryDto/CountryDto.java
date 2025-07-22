@@ -1,7 +1,7 @@
-package com.urlive.web.dto.domain.user.country;
+package com.urlive.web.dto.domain.user.countryDto;
 
 public record CountryDto(
-        Long id,
+        long id,
         String isoCode,
         String name
 ) {

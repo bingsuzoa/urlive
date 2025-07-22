@@ -2,7 +2,8 @@ package com.urlive.web.dto.user;
 
 import com.urlive.domain.user.option.Gender;
 import com.urlive.web.dto.domain.user.UserResponse;
-import com.urlive.web.dto.domain.user.country.CountryDto;
+
+import com.urlive.web.dto.domain.user.countryDto.CountryDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -25,7 +25,7 @@ public class UserLoginRequestTest {
     void 정상_로그인_확인() {
         UserLoginRequest request = new UserLoginRequest("01022223333", "user1111");
 
-        Assertions.assertThat(request.password()).isEqualTo("user1111");
+        Assertions.assertThat(request.encryptedPassword()).isEqualTo("user1111");
         Assertions.assertThat(request.phoneNumber()).isEqualTo("01022223333");
     }
 

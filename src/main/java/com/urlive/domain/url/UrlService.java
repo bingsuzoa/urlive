@@ -1,15 +1,16 @@
 package com.urlive.domain.url;
 
 import com.urlive.domain.url.shortUrlGenerator.ShortUrlGenerator;
-import com.urlive.domain.view.ViewService;
+import com.urlive.domain.user.User;
+import com.urlive.service.SseService;
+import com.urlive.web.dto.domain.common.DtoFactory;
 import com.urlive.web.dto.domain.url.UrlCreateRequest;
+import com.urlive.web.dto.domain.userUrl.UpdateTitleRequest;
+import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Optional;
 
 @Service
@@ -18,19 +19,19 @@ public class UrlService {
     @Autowired
     public UrlService(
             UrlRepository urlRepository,
-            ViewService viewService,
-            ShortUrlGenerator shortUrlGenerator
+            ShortUrlGenerator shortUrlGenerator,
+            SseService sseService
     ) {
         this.urlRepository = urlRepository;
-        this.viewService = viewService;
         this.shortUrlGenerator = shortUrlGenerator;
+        this.sseService = sseService;
     }
 
     private static final String INVALID_ORIGINAL_URL = "유효 하지 않은 URL 입니다.";
 
     private final UrlRepository urlRepository;
-    private final ViewService viewService;
     private final ShortUrlGenerator shortUrlGenerator;
+    private final SseService sseService;
 
 
     @Transactional
@@ -40,20 +41,64 @@ public class UrlService {
             throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
         }
         Url url = optionalUrl.get();
-        viewService.incrementViewCount(url.getId());
+        Long updatedViewCount = incrementViewCount(url);
+        sseService.sendViewUpdate(url.getId(), updatedViewCount);
+        System.out.println("📕SSE sendViewUpdate called for urlId: " + url.getId() + ", viewCount: " + updatedViewCount);
         return url.getOriginalUrl();
     }
 
+    @Transactional
+    private Long incrementViewCount(Url url) {
+        url.increaseViewCount();
+        return url.getViewCount();
+    }
 
     @Transactional
-    public Url findOrCreateShortUrl(UrlCreateRequest urlCreateRequest) {
+    public Url CreateShortUrl(User user, UrlCreateRequest urlCreateRequest) {
         String originalUrl = normalize(urlCreateRequest.originalUrl());
-        return urlRepository.findUrlWithUsersByOriginalUrl(originalUrl)
-                .orElseGet(() -> {
-                    String shortUrl = shortUrlGenerator.generateShortUrl();
-                    Url url = urlRepository.save(new Url(originalUrl, shortUrl));
-                    return url;
-                });
+        String shortUrl = shortUrlGenerator.generateShortUrl();
+        return urlRepository.save(new Url(user, originalUrl, shortUrl));
+    }
+
+    @Transactional
+    public UserUrlResponse updateTitle(Long id, UpdateTitleRequest updateTitleRequest) {
+        Optional<Url> optionalUrl = urlRepository.findById(id);
+        if (optionalUrl.isEmpty()) {
+            throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
+        }
+        Url url = optionalUrl.get();
+        return DtoFactory.getUserUrlDto(url.updateTitle(updateTitleRequest.newTitle()));
+    }
+
+    @Transactional(readOnly = true)
+    public UserUrlResponse getUpdatedUrlViewCount(Long userUrlId) {
+        Optional<Url> optionalUrl = urlRepository.findById(userUrlId);
+        if (optionalUrl.isEmpty()) {
+            throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
+        }
+        Url url = optionalUrl.get();
+        return DtoFactory.getUserUrlDto(url);
+    }
+
+    @Transactional(readOnly = true)
+    public Long getCurrentViewCount(Long userUrlId) {
+        Optional<Url> optionalUrl = urlRepository.findById(userUrlId);
+        if (optionalUrl.isEmpty()) {
+            throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
+        }
+        Url url = optionalUrl.get();
+        return url.getViewCount();
+    }
+
+    @Transactional
+    public UserUrlResponse deleteUrl(Long id) {
+        Optional<Url> optionalUrl = urlRepository.findById(id);
+        if (optionalUrl.isEmpty()) {
+            throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
+        }
+        Url url = optionalUrl.get();
+        urlRepository.delete(url);
+        return DtoFactory.getUserUrlDto(url);
     }
 
     private String normalize(String rawUrl) {
