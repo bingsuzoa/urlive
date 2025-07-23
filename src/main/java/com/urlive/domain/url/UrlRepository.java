@@ -13,4 +13,7 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
     Optional<Url> findUrlByOriginalUrl(String originalUrl);
 
     Optional<Url> findUrlByShortUrl(String shortUrl);
+
+    @Query("select u.viewCount from Url u where u.id = :id")
+    Optional<Long> findViewCountById(@Param("id") Long id);
 }

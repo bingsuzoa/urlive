@@ -1,6 +1,5 @@
 package com.urlive.domain.user.passwordHistory;
 
-import com.urlive.global.responseFormat.ResponseMessage;
 import com.urlive.service.RsaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -9,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
+import java.security.PrivateKey;
 import java.util.Base64;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class PasswordService {
 
     private static final String RSA_PKCS1_CIPHER = "RSA/ECB/PKCS1Padding";
     private static final String PASSWORD_ALREADY_USED = "기존에 사용하던 비밀번호와 동일합니다. 다시 작성해주세요.";
-    private static final String RSA_PASSWORD_DECODE_FAIL = "비밀번호를 잘못 입력하셨습니다.";
+    private static final String RSA_PASSWORD_DECODE_FAIL = "비밀번호 복호화에 실패했습니다.";
     public static final int FIRST_PAGE = 0;
     public static final int PASSWORD_HISTORY_LIMIT = 2;
 
@@ -58,18 +58,18 @@ public class PasswordService {
                 id, PageRequest.of(FIRST_PAGE, PASSWORD_HISTORY_LIMIT));
 
         histories.stream()
-                .filter(history -> matches(rawNewPassword, history.getPassword()))
+                .filter(history -> passwordEncoder.matches(rawNewPassword, history.getPassword()))
                 .findFirst()
                 .ifPresent(history -> {
                     throw new IllegalArgumentException(PASSWORD_ALREADY_USED);
                 });
-
     }
 
     private String getDecryptedPassword(String encryptedPassword) {
         try {
             Cipher cipher = Cipher.getInstance(RSA_PKCS1_CIPHER);
-            cipher.init(Cipher.DECRYPT_MODE, rsaService.getPrivateKey());
+            PrivateKey privateKey = rsaService.getPrivateKey();
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
             byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedPassword));
             return new String(decryptedBytes, StandardCharsets.UTF_8);
         } catch (Exception e) {

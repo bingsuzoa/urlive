@@ -14,6 +14,7 @@ import com.urlive.web.dto.domain.user.UserResponse;
 import com.urlive.web.dto.domain.user.countryDto.CountryDto;
 import com.urlive.web.dto.domain.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,11 +22,8 @@ import java.util.List;
 @Service
 public class UrliveFacade {
 
-    protected UrliveFacade() {
-
-    }
-
-    private UrliveFacade(
+    @Autowired
+    public UrliveFacade(
             UserService userService,
             UrlService urlService,
             CountryService countryService
@@ -35,9 +33,9 @@ public class UrliveFacade {
         this.countryService = countryService;
     }
 
-    private UserService userService;
-    private UrlService urlService;
-    private CountryService countryService;
+    private final UserService userService;
+    private final UrlService urlService;
+    private final CountryService countryService;
 
     public UserResponse saveUser(UserCreateRequest userCreateRequest) {
         return userService.saveUser(userCreateRequest);

@@ -9,6 +9,7 @@ import com.urlive.web.dto.domain.userUrl.UpdateTitleRequest;
 import com.urlive.web.dto.domain.userUrl.UserUrlResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -70,24 +71,10 @@ public class UrlService {
         return DtoFactory.getUserUrlDto(url.updateTitle(updateTitleRequest.newTitle()));
     }
 
-    @Transactional(readOnly = true)
-    public UserUrlResponse getUpdatedUrlViewCount(Long userUrlId) {
-        Optional<Url> optionalUrl = urlRepository.findById(userUrlId);
-        if (optionalUrl.isEmpty()) {
-            throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
-        }
-        Url url = optionalUrl.get();
-        return DtoFactory.getUserUrlDto(url);
-    }
-
-    @Transactional(readOnly = true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public Long getCurrentViewCount(Long userUrlId) {
-        Optional<Url> optionalUrl = urlRepository.findById(userUrlId);
-        if (optionalUrl.isEmpty()) {
-            throw new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL);
-        }
-        Url url = optionalUrl.get();
-        return url.getViewCount();
+        return urlRepository.findViewCountById(userUrlId)
+                .orElseThrow(() -> new IllegalArgumentException(Url.NOT_EXIST_SHORT_URL));
     }
 
     @Transactional
